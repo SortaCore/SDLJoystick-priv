@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>SDL Joystick Object - Expressions</title>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+</head>
+<body bgcolor="#FFFFFF">
+<p align="center"><font size="+3">SDL Joystick Object - Expressions</font></p>
+<p><b>Number of devices<br>
+  </b>Returns the number of devices currently connected. Up to 16 devices can be connected simultaneously.</p>
+<p><b>Get axis value<br>
+  </b>Returns the current value of a specific axis (-32768 to 32768). Device IDs range from 0 to 15, axis IDs range from 0 to 7.</p>
+<p><b>Get hat value<br>
+  </b>Returns the value of a specific POV hat/D-Pad on a device. Device IDs range from 0 to 15, hat IDs range from 0 to 3. Return values are as follows:
+<br>0 - <i>centered</i>
+<br>1 - <i>up</i>
+<br>2 - <i>right</i>
+<br>3 - <i>up + right</i>
+<br>4 - <i>down</i>
+<br>6 - <i>down + right</i>
+<br>8 - <i>left</i>
+<br>9 - <i>up + left</i>
+<br>12 - <i>down + left</i>
+</i>
+</p>
+<p><b>Get ball X delta<br>
+  </b>Returns the X position difference (from the previous frame) for a specific trackball on a device. Device IDs range from 0 to 15, ball IDs range from 0 to 3.</p>
+<p><b>Get ball Y delta<br>
+  </b>Returns the Y position difference (from the previous frame) for a specific trackball on a device. Device IDs range from 0 to 15, ball IDs range from 0 to 3.</p>
+<p><b>Get button state<br>
+  </b>Returns 1 if a specific button on a device is pressed or held down, and 0 if not. Device IDs range from 0 to 15, button IDs range from 0 to 31.</p>
+<p><b>Get raw buttons (HEX)<br>
+  </b>Returns a HEX string containing bit representations of all buttons currently pressed on a device. Device IDs range from 0 to 15.</p>
+<p><b>Get held button index<br>
+  </b>Returns the index of a button currently held down on a device. Up to 32 button slots can be tested for multiple buttons being pressed at the same time. Device IDs range from 0 to 15, button slots range from 0 to 31.</p>
+<p><b>Get last button pressed<br>
+  </b>Returns the index of the last button that was pressed on a device. This value only updates when a new button is pressed. Device IDs range from 0 to 15.</p>
+<p><b>Get last button released<br>
+  </b>Returns the index of the last button that was release on a device. This value only updates when a new button is released. Device IDs range from 0 to 15.</p>
+<p><b>Get device name<br>
+  </b>Returns a string containing the device name (as reported by SDL). Device IDs range from 0 to 15.</p>
+<p><b>Get device GUID<br>
+  </b>Returns a string containing the unique identifier (GUID) for a specific device. Device IDs range from 0 to 15.</p>
+<p><b>Number of axes<br>
+  </b>Returns the number of axes supported by a specific device. Device IDs range from 0 to 15. The maximum number of axes is 8.</p>
+<p><b>Number of buttons<br>
+  </b>Returns the number of axes buttons by a specific device. Device IDs range from 0 to 15. The maximum number of buttons is 32.</p>
+<p><b>Number of hats<br>
+  </b>Returns the number of hats/D-Pads supported by a specific device. Device IDs range from 0 to 15. The maximum number of hats is 4.</p>
+<p><b>Number of balls<br>
+  </b>Returns the number of trackballs supported by a specific device. Device IDs range from 0 to 15. The maximum number of balls is 4.</p>
+<p><a href="index.htm">Go back</a></p>
+</body>
+</html>

@@ -1,0 +1,28 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=..\ToInst\Help\SDLJoy.chm
+Contents file=sdljoy.hhc
+Default Font=Arial,8,0
+Default Window=Default
+Default topic=htm\index.htm
+Display compile progress=Yes
+Error log file=_errorlog.txt
+Full-text search=Yes
+Index file=sdljoy.hhk
+Language=0x409 English (United States)
+Title=SDL Joystick Help
+
+[WINDOWS]
+Default="SDL Joystick Help","sdljoy.hhc","sdljoy.hhk","htm\index.htm","htm\index.htm",,,,,0x62420,,0x384e,[0,0,640,480],,,,,,,0
+
+
+[FILES]
+htm\index.htm
+htm\desc.htm
+htm\prop.htm
+htm\act.htm
+htm\cnd.htm
+htm\exp.htm
+
+[INFOTYPES]
+
