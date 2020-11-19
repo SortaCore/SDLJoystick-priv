@@ -5,7 +5,7 @@ int Extension::GetAxis(int joy, int axis)
 	return DeviceIDOK(joy) && AxisIDOK(axis) ? (SDL_Data[joy].axis[axis]) : 0;
 }
 
-int Extension::GetButton(int joy, int button)
+int Extension::GetButtonPressedState(int joy, int button)
 {
 	return DeviceIDOK(joy) && ButtonIDOK(button) ? SDL_Data[joy].held_buttons[button] : 0;
 }
@@ -66,7 +66,7 @@ const TCHAR * Extension::GetDeviceName(int joy)
 	const std::string joyName = SDL_JoystickName(SDL_Data[joy].joystick);
 	return Runtime.CopyString(UTF8ToTString(joyName).c_str());
 }
-const TCHAR * Extension::GetButtonsHeld(int joy)
+const TCHAR * Extension::GetButtonsHeldHex(int joy)
 {
 	if (!DeviceIDOK(joy) || !SDL_Data[joy].connected)
 		return Runtime.CopyString(_T(""));

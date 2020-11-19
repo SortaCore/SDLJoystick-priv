@@ -51,7 +51,7 @@ public:
 	Edif::Runtime Runtime;
 
 	static const int MinimumBuild = 254;
-	static const int Version = 1;
+	static const int Version = 2;
 
 	static const OEFLAGS OEFLAGS = OEFLAGS::NEVER_SLEEP;
 	static const OEPREFS OEPREFS = OEPREFS::NONE;
@@ -117,7 +117,7 @@ public:
 	/// Expressions
 		
 		int GetAxis(int joy, int axis);
-		int GetButton(int joy, int button);
+		int GetButtonPressedState(int joy, int button);
 		int GetHat(int joy, int hat);
 		int GetBallXDelta(int joy, int ball);
 		int GetBallYDelta(int joy, int ball);
@@ -128,7 +128,7 @@ public:
 		int NumJoysticks();
 		const TCHAR * GetDeviceGUID(int joy);
 		const TCHAR * GetDeviceName(int joy);
-		const TCHAR * GetButtonsHeld(int joy);
+		const TCHAR * GetButtonsHeldHex(int joy);
 		int HeldButtonIndex(int joy, int index);
 		int LastButtonPressedIndex(int joy);
 		int LastButtonReleasedIndex(int joy);

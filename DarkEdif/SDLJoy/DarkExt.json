@@ -27,23 +27,23 @@
 			[ 0, "Number of devices" ],
 			"---",
 			[ 1, "Get axis value" ],
-			[ 2, "Get hat value" ],
-			[ 3, "Get ball X delta" ],
-			[ 4, "Get ball Y delta" ],
+			[ 3, "Get hat value" ],
+			[ 4, "Get ball X delta" ],
+			[ 5, "Get ball Y delta" ],
 			"---",
-			[ 5, "Get button state" ],
-			[ 6, "Get raw buttons (HEX)" ],
-			[ 7, "Get held button index" ],
-			[ 8, "Get last button pressed" ],
-			[ 9, "Get last button released" ],
+			[ 2, "Get button state" ],
+			[ 12, "Get raw buttons (HEX)" ],
+			[ 13, "Get held button index" ],
+			[ 14, "Get last button pressed" ],
+			[ 15, "Get last button released" ],
 			"---",
 			[ 10, "Get device name" ],
 			[ 11, "Get device GUID" ],
 			"---",
-			[ 12, "Number of axes" ],
-			[ 13, "Number of button" ],
-			[ 14, "Number of hats" ],
-			[ 15, "Number of balls" ]
+			[ 6, "Number of axes" ],
+			[ 7, "Number of button" ],
+			[ 8, "Number of hats" ],
+			[ 9, "Number of balls" ]
 		],
 		"Actions": [
 		],
@@ -115,40 +115,11 @@
 				]
 			},
 			{
-				"Title": "GetButtonPressed(",
+				"Title": "GetButtonPressedState(",
 				"Returns": "Integer",
 				"Parameters": [
 					[ "Integer", "Device ID (0-15)" ],
 					[ "Integer", "Button ID (0-31)" ]
-				]
-			},
-			{
-				"Title": "GetRawButtonsHex$(",
-				"Returns": "Text",
-				"Parameters": [
-					[ "Integer", "Device ID (0-15)" ]
-				]
-			},
-			{
-				"Title": "GetHeldButton(",
-				"Returns": "Integer",
-				"Parameters": [
-					[ "Integer", "Device ID (0-15)" ],
-					[ "Integer", "Button ID (0-31)" ]
-				]
-			},
-			{
-				"Title": "LastButtonPressed(",
-				"Returns": "Integer",
-				"Parameters": [
-					[ "Integer", "Device ID (0-15)" ]
-				]
-			},
-			{
-				"Title": "LastButtonReleased(",
-				"Returns": "Integer",
-				"Parameters": [
-					[ "Integer", "Device ID (0-15)" ]
 				]
 			},
 			{
@@ -160,7 +131,7 @@
 				]
 			},
 			{
-				"Title": "GetBallX(",
+				"Title": "GetBallXDelta(",
 				"Returns": "Integer",
 				"Parameters": [
 					[ "Integer", "Device ID (0-15)" ],
@@ -168,7 +139,7 @@
 				]
 			},
 			{
-				"Title": "GetBallY(",
+				"Title": "GetBallYDelta(",
 				"Returns": "Integer",
 				"Parameters": [
 					[ "Integer", "Device ID (0-15)" ],
@@ -213,6 +184,35 @@
 			{
 				"Title": "DeviceGUID$(",
 				"Returns": "Text",
+				"Parameters": [
+					[ "Integer", "Device ID (0-15)" ]
+				]
+			},
+			{
+				"Title": "GetRawButtonsHex$(",
+				"Returns": "Text",
+				"Parameters": [
+					[ "Integer", "Device ID (0-15)" ]
+				]
+			},
+			{
+				"Title": "GetHeldButtonIndex(",
+				"Returns": "Integer",
+				"Parameters": [
+					[ "Integer", "Device ID (0-15)" ],
+					[ "Integer", "Button ID (0-31)" ]
+				]
+			},
+			{
+				"Title": "LastButtonPressedIndex(",
+				"Returns": "Integer",
+				"Parameters": [
+					[ "Integer", "Device ID (0-15)" ]
+				]
+			},
+			{
+				"Title": "LastButtonReleasedIndex(",
+				"Returns": "Integer",
 				"Parameters": [
 					[ "Integer", "Device ID (0-15)" ]
 				]

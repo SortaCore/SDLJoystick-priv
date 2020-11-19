@@ -23,17 +23,17 @@ Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobP
 
 	LinkExpression(0, NumJoysticks);
 	LinkExpression(1, GetAxis);
-	LinkExpression(2, GetButton);
+	LinkExpression(2, GetButtonPressedState);
 	LinkExpression(3, GetHat);
 	LinkExpression(4, GetBallXDelta);
 	LinkExpression(5, GetBallYDelta);
 	LinkExpression(6, NumAxes);
 	LinkExpression(7, NumButtons);
 	LinkExpression(8, NumHats);
-	LinkExpression(9, NumJoysticks);
+	LinkExpression(9, NumBalls);
 	LinkExpression(10, GetDeviceName);
 	LinkExpression(11, GetDeviceGUID);
-	LinkExpression(12, GetButtonsHeld);
+	LinkExpression(12, GetButtonsHeldHex);
 	LinkExpression(13, HeldButtonIndex);
 	LinkExpression(14, LastButtonPressedIndex);
 	LinkExpression(15, LastButtonReleasedIndex);
@@ -46,23 +46,13 @@ Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobP
 
 	*/
 
-	// Don't use "this" inside these lambda functions, always ext.
-	// There can be nothing in the [] section of the lambda.
-	// If you're not sure about lambdas, you can remove this debugger stuff without any side effects;
-	// it's just an example of how to use the debugger. You can view it in Fusion itself to see.
 	FusionDebugger.AddItemToDebugger(
 		// reader function for your debug item
 		[](Extension *ext, std::tstring &writeTo) {
-			writeTo = _T("My text is: ") + ext->exampleDebuggerTextItem;
+			writeTo = _T("Number of joysticks: ") + std::to_tstring(ext->NumJoysticks());
 		},
-		// writer function (can be null if you don't want user to be able to edit it in debugger)
-		[](Extension *ext, std::tstring &newText)
-		{
-			ext->exampleDebuggerTextItem = newText;
-			return true; // accept the changes
-		}, 500, NULL
+		NULL, 500, NULL
 	);
-	
 }
 
 Extension::~Extension()
