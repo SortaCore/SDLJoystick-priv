@@ -21,23 +21,26 @@
 
 struct SDL_JoystickData
 {
-	SDL_Joystick * joystick;
-	SDL_Haptic * haptic;
-	bool connected;
-	int joy_id;
-	Sint16 axis[8];
-	Uint8 held_buttons[32];
-	Uint8 held_buttons_last[32];
-	Uint8 hat[4];
-	int ball_x[4];
-	int ball_y[4];
-	Sint8 currentheld[32];
-	Sint8 lastpressed;
-	Sint8 lastreleased;
-	char num_buttons;
-	char num_axes;
-	char num_hats;
-	char num_balls;
+	SDL_Joystick * joystick = nullptr;
+	SDL_Haptic * haptic = nullptr;
+	bool connected = false;
+	int joy_id = -1;
+	Sint16 axis[8] = {};
+	Uint8 held_buttons[32] = {};
+	Uint8 held_buttons_last[32] = {};
+	Uint8 hat[4] = {};
+	int ball_x[4] = {};
+	int ball_y[4] = {};
+	Sint8 currentheld[32] = {
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	Sint8 lastpressed = -1;
+	Sint8 lastreleased = -1;
+	char num_buttons = 0;
+	char num_axes = 0;
+	char num_hats = 0;
+	char num_balls = 0;
 };
 
 
@@ -51,7 +54,7 @@ public:
 	Edif::Runtime Runtime;
 
 	static const int MinimumBuild = 254;
-	static const int Version = 2;
+	static const int Version = 3;
 
 	static const OEFLAGS OEFLAGS = OEFLAGS::NEVER_SLEEP;
 	static const OEPREFS OEPREFS = OEPREFS::NONE;
@@ -74,7 +77,8 @@ public:
 		and destructors, without having to call them manually or store
 		a pointer.
 	*/
-
+	void CloseJoystick(int joy);
+	void OpenJoystick(int joy, int which);
 
 	constexpr static int NUM_HATS = 4;
 	constexpr static int NUM_AXES = 8;
@@ -88,6 +92,8 @@ public:
 	bool HatIDOK(int devID);
 	bool AxisIDOK(int axisID);
 	bool BallIDOK(int ballID);
+
+	bool sdlInited = false;
 
 	// int MyVariable;
 
