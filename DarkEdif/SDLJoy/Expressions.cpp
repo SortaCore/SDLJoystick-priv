@@ -1,44 +1,44 @@
 #include "Common.h"
 
-int Extension::GetAxis(int joy, int axis)
+int Extension::GetAxis(int joy, int axis) const
 {
 	return DeviceIDOK(joy) && AxisIDOK(axis) ? (SDL_Data[joy].axis[axis]) : 0;
 }
 
-int Extension::GetButtonPressedState(int joy, int button)
+int Extension::GetButtonPressedState(int joy, int button) const
 {
 	return DeviceIDOK(joy) && ButtonIDOK(button) ? SDL_Data[joy].held_buttons[button] : 0;
 }
 
-int Extension::GetBallXDelta(int joy, int ball)
+int Extension::GetBallXDelta(int joy, int ball) const
 {
 	return DeviceIDOK(joy) && BallIDOK(ball) ? SDL_Data[joy].ball_x[ball] : 0;
 }
-int Extension::GetHat(int joy, int hat)
+int Extension::GetHat(int joy, int hat) const
 {
 	return DeviceIDOK(joy) && HatIDOK(hat) ? SDL_Data[joy].hat[hat] : 0;
 }
-int Extension::GetBallYDelta(int joy, int ball)
+int Extension::GetBallYDelta(int joy, int ball) const
 {
 	return DeviceIDOK(joy) && BallIDOK(ball) ? SDL_Data[joy].ball_y[ball] : 0;
 }
-int Extension::NumAxes(int joy)
+int Extension::NumAxes(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].num_axes : 0;
 }
-int Extension::NumButtons(int joy)
+int Extension::NumButtons(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].num_axes : 0;
 }
-int Extension::NumHats(int joy)
+int Extension::NumHats(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].num_hats : 0;
 }
-int Extension::NumBalls(int joy)
+int Extension::NumBalls(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].num_balls : 0;
 }
-int Extension::NumJoysticks()
+int Extension::NumJoysticks() const
 {
 	int numjoys = 0;
 	for (int joy = 0; joy < NUM_DEVICES; ++joy)
@@ -80,17 +80,17 @@ const TCHAR * Extension::GetButtonsHeldHex(int joy)
 	_stprintf(res, _T("%08X"), buttons);
 	return Runtime.CopyString(res);
 }
-int Extension::HeldButtonIndex(int joy, int index)
+int Extension::HeldButtonIndex(int joy, int index) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].currentheld[index] : 0;
 }
 
-int Extension::LastButtonPressedIndex(int joy)
+int Extension::LastButtonPressedIndex(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].lastpressed : 0;
 }
 
-int Extension::LastButtonReleasedIndex(int joy)
+int Extension::LastButtonReleasedIndex(int joy) const
 {
 	return DeviceIDOK(joy) ? SDL_Data[joy].lastreleased : 0;
 }

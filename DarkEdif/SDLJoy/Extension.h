@@ -54,7 +54,7 @@ public:
 	Edif::Runtime Runtime;
 
 	static const int MinimumBuild = 254;
-	static const int Version = 3;
+	static const int Version = 4;
 
 	static const OEFLAGS OEFLAGS = OEFLAGS::NEVER_SLEEP;
 	static const OEPREFS OEPREFS = OEPREFS::NONE;
@@ -64,19 +64,8 @@ public:
 	Extension(RUNDATA * rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobPtr);
 	~Extension();
 
-	// To add items to the Fusion Debugger, just uncomment this line.
 	DarkEdif::FusionDebugger FusionDebugger;
-	// After enabling it, you run FusionDebugger.AddItemToDebugger() inside Extension's constructor
-	// As an example:
-	std::tstring exampleDebuggerTextItem;
 
-	/*  Add any data you want to store in your extension to this class
-		(eg. what you'd normally store in rdPtr in old SDKs).
-
-		Unlike rdPtr, you can store real C++ objects with constructors
-		and destructors, without having to call them manually or store
-		a pointer.
-	*/
 	void CloseJoystick(int joy);
 	void OpenJoystick(int joy, int which);
 
@@ -87,11 +76,11 @@ public:
 	constexpr static int NUM_BUTTONS = 32;
 
 	SDL_JoystickData SDL_Data[NUM_DEVICES];
-	bool DeviceIDOK(int devID);
-	bool ButtonIDOK(int buttonID);
-	bool HatIDOK(int devID);
-	bool AxisIDOK(int axisID);
-	bool BallIDOK(int ballID);
+	bool DeviceIDOK(int devID) const;
+	bool ButtonIDOK(int buttonID) const;
+	bool HatIDOK(int devID) const;
+	bool AxisIDOK(int axisID) const;
+	bool BallIDOK(int ballID) const;
 
 	bool sdlInited = false;
 
@@ -109,35 +98,36 @@ public:
 	*/
 
 	/// Actions
+		void AddMappingsFromFile(const TCHAR * filePath) const;
 
 	/// Conditions
 
-		bool IsConnected(int devID);
-		bool ButtonPressed(int devID, int buttonID);
-		bool ButtonHeldDown(int devID, int buttonID);
-		bool ButtonReleased(int devID, int buttonID);
-		bool AnyButtonPressed(int devID);
-		bool AnyButtonHeldDown(int devID);
-		bool AnyButtonReleased(int devID);
+		bool IsConnected(int devID) const;
+		bool ButtonPressed(int devID, int buttonID) const;
+		bool ButtonHeldDown(int devID, int buttonID) const;
+		bool ButtonReleased(int devID, int buttonID) const;
+		bool AnyButtonPressed(int devID) const;
+		bool AnyButtonHeldDown(int devID) const;
+		bool AnyButtonReleased(int devID) const;
 
 	/// Expressions
 		
-		int GetAxis(int joy, int axis);
-		int GetButtonPressedState(int joy, int button);
-		int GetHat(int joy, int hat);
-		int GetBallXDelta(int joy, int ball);
-		int GetBallYDelta(int joy, int ball);
-		int NumAxes(int joy);
-		int NumButtons(int joy);
-		int NumHats(int joy);
-		int NumBalls(int joy);
-		int NumJoysticks();
+		int GetAxis(int joy, int axis) const;
+		int GetButtonPressedState(int joy, int button) const;
+		int GetHat(int joy, int hat) const;
+		int GetBallXDelta(int joy, int ball) const;
+		int GetBallYDelta(int joy, int ball) const;
+		int NumAxes(int joy) const;
+		int NumButtons(int joy) const;
+		int NumHats(int joy) const;
+		int NumBalls(int joy) const;
+		int NumJoysticks() const;
 		const TCHAR * GetDeviceGUID(int joy);
 		const TCHAR * GetDeviceName(int joy);
 		const TCHAR * GetButtonsHeldHex(int joy);
-		int HeldButtonIndex(int joy, int index);
-		int LastButtonPressedIndex(int joy);
-		int LastButtonReleasedIndex(int joy);
+		int HeldButtonIndex(int joy, int index) const;
+		int LastButtonPressedIndex(int joy) const;
+		int LastButtonReleasedIndex(int joy) const;
 
 
 

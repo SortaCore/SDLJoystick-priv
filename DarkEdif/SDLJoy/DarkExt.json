@@ -5,12 +5,13 @@
 		"About": {
 			"Name": "SDL Joystick object",
 			"Author": "PkR",
-			"Copyright": "Copyright \u00A9 2020 by PkR",
-			"Comment": "Use the SDL2 Joystick API to interface with game controllers. (DarkEdif port)",
+			"Copyright": "Copyright \u00A9 2020 by PkR and Phi",
+			"Comment": "Use the SDL2 Joystick API to interface with game controllers. (DarkEdif b%i, SDL %d.%d.%d)",
 			"Help": "Help/SDLJoy.chm",
 			"URL": ""
 		},
 		"ActionMenu": [
+			[ 0, "Advanced: add controller mapping from file" ]
 		],
 		"ConditionMenu": [
 			[ 0, "Device is connected" ],
@@ -46,6 +47,12 @@
 			[ 9, "Number of balls" ]
 		],
 		"Actions": [
+			{
+				"Title": "%o: Add controller mappings from file %0",
+				"Parameters": [
+					[ "Text", "Path of the mapping file" ]
+				]
+			}
 		],
 		"Conditions": [
 			{

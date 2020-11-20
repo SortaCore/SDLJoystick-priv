@@ -100,6 +100,7 @@
     <ClCompile Include="..\Lib\Shared\Edif.General.cpp" />
     <ClCompile Include="..\Lib\Shared\Edif.Runtime.cpp" />
     <ClCompile Include="..\Lib\Shared\ObjectSelection.cpp" />
+    <ClCompile Include="Actions.cpp" />
     <ClCompile Include="Conditions.cpp" />
     <ClCompile Include="Edittime.cpp" />
     <ClCompile Include="Expressions.cpp" />

@@ -10,6 +10,7 @@
 	const extern struct _json_value & CurrentLanguage();
 	#define CurLang CurrentLanguage()
 #endif
+#define JSON_COMMENT_MACRO Extension::Version, SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL
 
 
 #include "Edif.h"

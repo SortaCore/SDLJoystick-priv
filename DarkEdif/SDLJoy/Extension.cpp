@@ -12,6 +12,7 @@ Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobP
 		Link all your action/condition/expression functions to their IDs to match the
 		IDs in the JSON here
 	*/
+	LinkAction(0, AddMappingsFromFile);
 
 	LinkCondition(0, IsConnected);
 	LinkCondition(1, ButtonPressed);
