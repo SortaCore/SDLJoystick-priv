@@ -54,11 +54,11 @@ public:
 	Edif::Runtime Runtime;
 
 	static const int MinimumBuild = 254;
-	static const int Version = 4;
+	static const int Version = 5;
 
 	static const OEFLAGS OEFLAGS = OEFLAGS::NEVER_SLEEP;
 	static const OEPREFS OEPREFS = OEPREFS::NONE;
-	
+
 	static const int WindowProcPriority = 100;
 
 	Extension(RUNDATA * rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobPtr);
@@ -83,6 +83,7 @@ public:
 	bool BallIDOK(int ballID) const;
 
 	bool sdlInited = false;
+	int tickCount = 0;
 
 	// int MyVariable;
 
@@ -111,7 +112,7 @@ public:
 		bool AnyButtonReleased(int devID) const;
 
 	/// Expressions
-		
+
 		int GetAxis(int joy, int axis) const;
 		int GetButtonPressedState(int joy, int button) const;
 		int GetHat(int joy, int hat) const;

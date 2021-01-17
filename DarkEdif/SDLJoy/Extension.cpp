@@ -1,5 +1,5 @@
 #include "Common.h"
-
+#include <thread>
 
 ///
 /// EXTENSION CONSTRUCTOR/DESTRUCTOR
@@ -55,79 +55,82 @@ Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobP
 		NULL, 500, NULL
 	);
 
-	// Open SDL library - pulled from SDL's testgamecontroller project
-	int init = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
-	char ErrorMsg[400];
-	if (init != 0)
+	std::thread([this]()
 	{
-		sprintf_s(ErrorMsg, "Error initializing SDL library: %s.", SDL_GetError());
-		MessageBoxA(nullptr, ErrorMsg, "SDL Init Error", MB_OK | MB_ICONERROR);
-		return;
-	}
+		// Open SDL library - pulled from SDL's testgamecontroller project
+		int init = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+		char ErrorMsg[400];
+		if (init != 0)
+		{
+			sprintf_s(ErrorMsg, "Error initializing SDL library: %s.", SDL_GetError());
+			MessageBoxA(nullptr, ErrorMsg, "SDL Init Error", MB_OK | MB_ICONERROR);
+			return;
+		}
 
-	sdlInited = true;
-	if ((init = SDL_JoystickEventState(SDL_ENABLE)) < 1)
-	{
-		sprintf_s(ErrorMsg, "Error enabling SDL joystick events: %s.", SDL_GetError());
-		MessageBoxA(nullptr, ErrorMsg, PROJECT_NAME " - SDL Init Error", MB_OK | MB_ICONERROR);
-		return;
-	}
+		sdlInited = true;
+		if ((init = SDL_JoystickEventState(SDL_ENABLE)) < 1)
+		{
+			sprintf_s(ErrorMsg, "Error enabling SDL joystick events: %s.", SDL_GetError());
+			MessageBoxA(nullptr, ErrorMsg, PROJECT_NAME " - SDL Init Error", MB_OK | MB_ICONERROR);
+			return;
+		}
 
 #ifndef _DEBUG
 #define WriteToLogIfDebug(...) ((void)0)
 #else
 #define WriteToLogIfDebug(...) SDL_Log(__VA_ARGS__)
 
-	/* Enable standard application logging */
-	SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+		/* Enable standard application logging */
+		SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 
-	int i;
-	int nController = 0;
-	int retcode = 0;
-	char guid[64];
-	/* Print information about the controller */
-	for (i = 0; i < SDL_NumJoysticks(); ++i) {
-		const char * name;
-		const char * description;
+		int i;
+		int nController = 0;
+		int retcode = 0;
+		char guid[64];
+		/* Print information about the controller */
+		for (i = 0; i < SDL_NumJoysticks(); ++i) {
+			const char * name;
+			const char * description;
 
-		SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i),
-			guid, sizeof(guid));
+			SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i),
+				guid, sizeof(guid));
 
-		if (SDL_IsGameController(i))
-		{
-			nController++;
-			name = SDL_GameControllerNameForIndex(i);
-			switch (SDL_GameControllerTypeForIndex(i)) {
-			case SDL_CONTROLLER_TYPE_XBOX360:
-				description = "XBox 360 Controller";
-				break;
-			case SDL_CONTROLLER_TYPE_XBOXONE:
-				description = "XBox One Controller";
-				break;
-			case SDL_CONTROLLER_TYPE_PS3:
-				description = "PS3 Controller";
-				break;
-			case SDL_CONTROLLER_TYPE_PS4:
-				description = "PS4 Controller";
-				break;
-			case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
-				description = "Nintendo Switch Pro Controller";
-				break;
-			default:
-				description = "Game Controller";
-				break;
+			if (SDL_IsGameController(i))
+			{
+				nController++;
+				name = SDL_GameControllerNameForIndex(i);
+				switch (SDL_GameControllerTypeForIndex(i)) {
+				case SDL_CONTROLLER_TYPE_XBOX360:
+					description = "XBox 360 Controller";
+					break;
+				case SDL_CONTROLLER_TYPE_XBOXONE:
+					description = "XBox One Controller";
+					break;
+				case SDL_CONTROLLER_TYPE_PS3:
+					description = "PS3 Controller";
+					break;
+				case SDL_CONTROLLER_TYPE_PS4:
+					description = "PS4 Controller";
+					break;
+				case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+					description = "Nintendo Switch Pro Controller";
+					break;
+				default:
+					description = "Game Controller";
+					break;
+				}
 			}
+			else {
+				name = SDL_JoystickNameForIndex(i);
+				description = "Joystick";
+			}
+			SDL_Log("%s %d: %s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)\n",
+				description, i, name ? name : "Unknown", guid,
+				SDL_JoystickGetDeviceVendor(i), SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
 		}
-		else {
-			name = SDL_JoystickNameForIndex(i);
-			description = "Joystick";
-		}
-		SDL_Log("%s %d: %s (guid %s, VID 0x%.4x, PID 0x%.4x, player index = %d)\n",
-			description, i, name ? name : "Unknown", guid,
-			SDL_JoystickGetDeviceVendor(i), SDL_JoystickGetDeviceProduct(i), SDL_JoystickGetDevicePlayerIndex(i));
-	}
-	SDL_Log("There are %d game controller(s) attached (%d joystick(s))\n", nController, SDL_NumJoysticks());
+		SDL_Log("There are %d game controller(s) attached (%d joystick(s))\n", nController, SDL_NumJoysticks());
 #endif
+	}).detach(); // Run in secondary thread as of build 5
 }
 
 Extension::~Extension()
@@ -207,6 +210,14 @@ REFLAG Extension::Handle()
 {
 	if (!sdlInited)
 		return REFLAG::NONE;
+
+	// Skip first few ticks of frame to prevent SDL_PollEvent stuttering the app
+	// while event system loads
+	if (tickCount < 5)
+	{
+		++tickCount;
+		return REFLAG::NONE;
+	}
 
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
