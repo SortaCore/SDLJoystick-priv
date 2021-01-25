@@ -881,7 +881,7 @@ SDL_PrivateAddMappingForGUID(SDL_JoystickGUID jGUID, const char *mappingString, 
             ControllerMapping_t *pCurrMapping, *pPrevMapping;
 
             for ( pPrevMapping = s_pSupportedControllers, pCurrMapping = pPrevMapping->next;
-                  pCurrMapping; 
+                  pCurrMapping;
                   pPrevMapping = pCurrMapping, pCurrMapping = pCurrMapping->next ) {
                 /* continue; */
             }
@@ -1085,12 +1085,12 @@ SDL_GameControllerAddMappingsFromRW(SDL_RWops * rw, int freerw)
     int controllers = 0;
     char *buf, *line, *line_end, *tmp, *comma, line_platform[64];
     size_t db_size, platform_len;
-    
+
     if (rw == NULL) {
         return SDL_SetError("Invalid RWops");
     }
     db_size = (size_t)SDL_RWsize(rw);
-    
+
     buf = (char *)SDL_malloc(db_size + 1);
     if (buf == NULL) {
         if (freerw) {
@@ -1098,7 +1098,7 @@ SDL_GameControllerAddMappingsFromRW(SDL_RWops * rw, int freerw)
         }
         return SDL_SetError("Could not allocate space to read DB into memory");
     }
-    
+
     if (SDL_RWread(rw, buf, db_size, 1) != 1) {
         if (freerw) {
             SDL_RWclose(rw);
@@ -1106,14 +1106,14 @@ SDL_GameControllerAddMappingsFromRW(SDL_RWops * rw, int freerw)
         SDL_free(buf);
         return SDL_SetError("Could not read DB");
     }
-    
+
     if (freerw) {
         SDL_RWclose(rw);
     }
-    
+
     buf[db_size] = '\0';
     line = buf;
-    
+
     while (line < buf + db_size) {
         line_end = SDL_strchr(line, '\n');
         if (line_end != NULL) {
@@ -1121,7 +1121,7 @@ SDL_GameControllerAddMappingsFromRW(SDL_RWops * rw, int freerw)
         } else {
             line_end = buf + db_size;
         }
-        
+
         /* Extract and verify the platform */
         tmp = SDL_strstr(line, SDL_CONTROLLER_PLATFORM_FIELD);
         if (tmp != NULL) {
@@ -1345,7 +1345,7 @@ SDL_GameControllerLoadHints()
 }
 
 /*
- * Fill the given buffer with the expected controller mapping filepath. 
+ * Fill the given buffer with the expected controller mapping filepath.
  * Usually this will just be SDL_HINT_GAMECONTROLLERCONFIG_FILE, but for
  * Android, we want to get the internal storage path.
  */
@@ -1381,7 +1381,7 @@ SDL_GameControllerInitMappings(void)
     }
 
     if (SDL_GetControllerMappingFilePath(szControllerMapPath, sizeof(szControllerMapPath))) {
-        SDL_GameControllerAddMappingsFromFile(szControllerMapPath);        
+        SDL_GameControllerAddMappingsFromFile(szControllerMapPath);
     }
 
     /* load in any user supplied config */

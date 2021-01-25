@@ -547,7 +547,7 @@ SDL_SYS_HapticOpenFromJoystick(SDL_Haptic * haptic, SDL_Joystick * joystick)
     int fd;
     int ret;
     SDL_hapticlist_item *item;
-    
+
     if (joystick->driver != &SDL_LINUX_JoystickDriver) {
         return -1;
     }

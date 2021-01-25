@@ -352,8 +352,8 @@ pointer_handle_button_common(struct SDL_WaylandInput *input, uint32_t serial,
             default:
                 return;
         }
-            
-        Wayland_data_device_set_serial(input->data_device, serial); 
+
+        Wayland_data_device_set_serial(input->data_device, serial);
 
         SDL_SendMouseButton(window->sdlwindow, 0,
                             state ? SDL_PRESSED : SDL_RELEASED, sdl_button);
@@ -773,13 +773,13 @@ data_source_handle_send(void *data, struct wl_data_source *wl_data_source,
 {
     Wayland_data_source_send((SDL_WaylandDataSource *)data, mime_type, fd);
 }
-                       
+
 static void
 data_source_handle_cancelled(void *data, struct wl_data_source *wl_data_source)
 {
     Wayland_data_source_destroy(data);
 }
-                       
+
 static void
 data_source_handle_dnd_drop_performed(void *data, struct wl_data_source *wl_data_source)
 {
@@ -822,7 +822,7 @@ Wayland_data_source_create(_THIS)
                      driver_data->data_device_manager);
         }
 
-        if (id == NULL) { 
+        if (id == NULL) {
             SDL_SetError("Wayland unable to create data source");
         } else {
             data_source = SDL_calloc(1, sizeof *data_source);
@@ -892,8 +892,8 @@ data_device_handle_enter(void *data, struct wl_data_device *wl_data_device,
 {
     SDL_WaylandDataDevice *data_device = data;
     SDL_bool has_mime = SDL_FALSE;
-    uint32_t dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE; 
-        
+    uint32_t dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
+
     data_device->drag_serial = serial;
 
     if (id != NULL) {
@@ -946,7 +946,7 @@ data_device_handle_drop(void *data, struct wl_data_device *wl_data_device)
     const char *current_uri = NULL;
     const char *last_char = NULL;
     char *current_char = NULL;
-    
+
     if (data_device->drag_offer != NULL) {
         /* TODO: SDL Support more mime types */
         buffer = Wayland_data_offer_receive(data_device->drag_offer,
@@ -972,7 +972,7 @@ data_device_handle_drop(void *data, struct wl_data_device *wl_data_device)
 static void
 data_device_handle_selection(void *data, struct wl_data_device *wl_data_device,
                              struct wl_data_offer *id)
-{    
+{
     SDL_WaylandDataDevice *data_device = data;
     SDL_WaylandDataOffer *offer = NULL;
 
@@ -1015,7 +1015,7 @@ Wayland_display_add_input(SDL_VideoData *d, uint32_t id)
     input->sx_w = wl_fixed_from_int(0);
     input->sy_w = wl_fixed_from_int(0);
     d->input = input;
-    
+
     if (d->data_device_manager != NULL) {
         data_device = SDL_calloc(1, sizeof *data_device);
         if (data_device == NULL) {

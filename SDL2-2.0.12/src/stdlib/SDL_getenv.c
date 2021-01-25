@@ -51,7 +51,7 @@ SDL_setenv(const char *name, const char *value, int overwrite)
     if (!name || SDL_strlen(name) == 0 || SDL_strchr(name, '=') != NULL || !value) {
         return (-1);
     }
-    
+
     return setenv(name, value, overwrite);
 }
 #elif defined(__WIN32__)
@@ -62,7 +62,7 @@ SDL_setenv(const char *name, const char *value, int overwrite)
     if (!name || SDL_strlen(name) == 0 || SDL_strchr(name, '=') != NULL || !value) {
         return (-1);
     }
-    
+
     if (!overwrite) {
         if (GetEnvironmentVariableA(name, NULL, 0) > 0) {
             return 0;  /* asked not to overwrite existing value. */
@@ -85,7 +85,7 @@ SDL_setenv(const char *name, const char *value, int overwrite)
     if (!name || SDL_strlen(name) == 0 || SDL_strchr(name, '=') != NULL || !value) {
         return (-1);
     }
-    
+
     if (getenv(name) != NULL) {
         if (overwrite) {
             unsetenv(name);
@@ -197,7 +197,7 @@ SDL_getenv(const char *name)
     if (!name || SDL_strlen(name)==0) {
         return NULL;
     }
-    
+
     bufferlen =
         GetEnvironmentVariableA(name, SDL_envmem, (DWORD) SDL_envmemlen);
     if (bufferlen == 0) {
@@ -225,7 +225,7 @@ SDL_getenv(const char *name)
     if (!name || SDL_strlen(name)==0) {
         return NULL;
     }
-    
+
     value = (char *) 0;
     if (SDL_env) {
         len = SDL_strlen(name);

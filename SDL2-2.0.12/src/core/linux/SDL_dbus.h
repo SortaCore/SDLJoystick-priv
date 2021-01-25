@@ -50,7 +50,7 @@ typedef struct SDL_DBusContext {
     void (*connection_flush)(DBusConnection *);
     dbus_bool_t (*connection_read_write)(DBusConnection *, int);
     DBusDispatchStatus (*connection_dispatch)(DBusConnection *);
-    dbus_bool_t (*message_is_signal)(DBusMessage *, const char *, const char *); 
+    dbus_bool_t (*message_is_signal)(DBusMessage *, const char *, const char *);
     DBusMessage *(*message_new_method_call)(const char *, const char *, const char *, const char *);
     dbus_bool_t (*message_append_args)(DBusMessage *, int, ...);
     dbus_bool_t (*message_append_args_valist)(DBusMessage *, int, va_list);
@@ -60,7 +60,7 @@ typedef struct SDL_DBusContext {
     dbus_bool_t (*message_iter_next)(DBusMessageIter *);
     void (*message_iter_get_basic)(DBusMessageIter *, void *);
     int (*message_iter_get_arg_type)(DBusMessageIter *);
-    void (*message_iter_recurse)(DBusMessageIter *, DBusMessageIter *); 
+    void (*message_iter_recurse)(DBusMessageIter *, DBusMessageIter *);
     void (*message_unref)(DBusMessage *);
     void (*error_init)(DBusError *);
     dbus_bool_t (*error_is_set)(const DBusError *);

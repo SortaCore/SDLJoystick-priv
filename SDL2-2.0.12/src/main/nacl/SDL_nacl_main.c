@@ -38,15 +38,15 @@ nacl_main(int argc, char *argv[])
 {
     int status;
     PSEvent* ps_event;
-    PP_Resource event;  
+    PP_Resource event;
     struct PP_Rect rect;
     int ready = 0;
     const PPB_View *ppb_view = PSInterfaceView();
-    
+
     /* This is started in a worker thread by ppapi_simple! */
-    
+
     /* Wait for the first PSE_INSTANCE_DIDCHANGEVIEW event before starting the app */
-    
+
     PSEventSetFilter(PSE_INSTANCE_DIDCHANGEVIEW);
     while (!ready) {
         /* Process all waiting events without blocking */
@@ -65,13 +65,13 @@ nacl_main(int argc, char *argv[])
             PSEventRelease(ps_event);
         }
     }
-    
-    /* Do a default httpfs mount on /, 
-     * apps can override this by unmounting / 
+
+    /* Do a default httpfs mount on /,
+     * apps can override this by unmounting /
      * and remounting with the desired configuration
      */
     nacl_io_init_ppapi(PSGetInstanceId(), PSGetInterface);
-    
+
     umount("/");
     mount(
         "",  /* source */
@@ -79,7 +79,7 @@ nacl_main(int argc, char *argv[])
         "httpfs",  /* filesystemtype */
         0,  /* mountflags */
         "");  /* data specific to the html5fs type */
-    
+
     /* Everything is ready, start the user main function */
     SDL_SetMainReady();
     status = SDL_main(argc, argv);

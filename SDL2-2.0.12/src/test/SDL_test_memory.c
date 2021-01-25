@@ -61,7 +61,7 @@ static unsigned int get_allocation_bucket(void *mem)
     index = (crc_value & (SDL_arraysize(s_tracked_allocations) - 1));
     return index;
 }
- 
+
 static SDL_bool SDL_IsAllocationTracked(void *mem)
 {
     SDL_tracked_allocation *entry;

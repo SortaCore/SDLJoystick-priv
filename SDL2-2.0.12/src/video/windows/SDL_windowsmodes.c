@@ -53,7 +53,7 @@ WIN_UpdateDisplayMode(_THIS, LPCTSTR deviceName, DWORD index, SDL_DisplayMode * 
 
         mode->w = logical_width;
         mode->h = logical_height;
-        
+
         SDL_zeroa(bmi_data);
         bmi = (LPBITMAPINFO) bmi_data;
         bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -259,7 +259,7 @@ WIN_GetDisplayDPI(_THIS, SDL_VideoDisplay * display, float * ddpi_out, float * h
     const SDL_DisplayData *displaydata = (SDL_DisplayData *)display->driverdata;
     const SDL_VideoData *videodata = (SDL_VideoData *)display->device->driverdata;
     float hdpi = 0, vdpi = 0, ddpi = 0;
-    
+
     if (videodata->GetDpiForMonitor) {
         UINT hdpi_uint, vdpi_uint;
         // Windows 8.1+ codepath

@@ -67,7 +67,7 @@ Emscripten_GLES_LoadLibrary(_THIS, const char *path) {
     if (!_this->egl_data->egl_display) {
         return SDL_SetError("Could not get EGL display");
     }
-    
+
     if (_this->egl_data->eglInitialize(_this->egl_data->egl_display, NULL, NULL) != EGL_TRUE) {
         return SDL_SetError("Could not initialize EGL");
     }
@@ -77,7 +77,7 @@ Emscripten_GLES_LoadLibrary(_THIS, const char *path) {
     } else {
         *_this->gl_config.driver_path = '\0';
     }
-    
+
     return 0;
 }
 

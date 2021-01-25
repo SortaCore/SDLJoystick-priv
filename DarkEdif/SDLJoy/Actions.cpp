@@ -23,6 +23,6 @@ void Extension::AddMappingsFromFile(const TCHAR * filePath) const
 	{
 		_stprintf_s(errorText, _T("Failed to read controller mappings from \"%s\". Error %hs."), filePath, SDL_GetError());
 		MessageBox(NULL, errorText, _T(PROJECT_NAME " - Error reading mapping file"), MB_OK | MB_ICONERROR);
-		return; 
+		return;
 	}
 }

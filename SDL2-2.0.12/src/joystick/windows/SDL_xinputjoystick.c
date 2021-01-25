@@ -367,7 +367,7 @@ SDL_XINPUT_JoystickOpen(SDL_Joystick * joystick, JoyStick_DeviceData *joystickde
     return 0;
 }
 
-static void 
+static void
 UpdateXInputJoystickBatteryInformation(SDL_Joystick * joystick, XINPUT_BATTERY_INFORMATION_EX *pBatteryInformation)
 {
     if (pBatteryInformation->BatteryType != BATTERY_TYPE_UNKNOWN) {

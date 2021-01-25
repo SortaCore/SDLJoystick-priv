@@ -33,8 +33,8 @@
 #include <OpenGL/OpenGL.h>
 #endif
 
-/* To prevent unnecessary window recreation, 
- * these should match the defaults selected in SDL_GL_ResetAttributes 
+/* To prevent unnecessary window recreation,
+ * these should match the defaults selected in SDL_GL_ResetAttributes
  */
 
 #define RENDERER_CONTEXT_MAJOR 2

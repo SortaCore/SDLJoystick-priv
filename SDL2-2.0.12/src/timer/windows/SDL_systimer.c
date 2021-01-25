@@ -31,7 +31,7 @@
 
 /* The first (low-resolution) ticks value of the application */
 static DWORD start = 0;
-static BOOL ticks_started = FALSE; 
+static BOOL ticks_started = FALSE;
 
 /* Store if a high-resolution performance counter exists on the system */
 static BOOL hires_timer_available;

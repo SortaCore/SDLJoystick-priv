@@ -36,7 +36,7 @@
 /* MinGW32 mmsystem.h doesn't include these structures */
 #if defined(__MINGW32__) && defined(_MMSYSTEM_H)
 
-typedef struct tagWAVEINCAPS2W 
+typedef struct tagWAVEINCAPS2W
 {
     WORD wMid;
     WORD wPid;

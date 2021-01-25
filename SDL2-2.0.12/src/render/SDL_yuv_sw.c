@@ -62,8 +62,8 @@ SDL_SW_CreateYUVTexture(Uint32 format, int w, int h)
         const int sz_plane         = w * h;
         const int sz_plane_chroma  = ((w + 1) / 2) * ((h + 1) / 2);
         const int sz_plane_packed  = ((w + 1) / 2) * h;
-        int dst_size = 0;     
-        switch(format) 
+        int dst_size = 0;
+        switch(format)
         {
             case SDL_PIXELFORMAT_YV12: /**< Planar mode: Y + V + U  (3 planes) */
             case SDL_PIXELFORMAT_IYUV: /**< Planar mode: Y + U + V  (3 planes) */
@@ -162,7 +162,7 @@ SDL_SW_UpdateYUVTexture(SDL_SW_YUVTexture * swdata, const SDL_Rect * rect,
                 src += pitch;
                 dst += swdata->w;
             }
-            
+
             /* Copy the next plane */
             src = (Uint8 *) pixels + rect->h * pitch;
             dst = swdata->pixels + swdata->h * swdata->w;
@@ -228,7 +228,7 @@ SDL_SW_UpdateYUVTexture(SDL_SW_YUVTexture * swdata, const SDL_Rect * rect,
                     src += pitch;
                     dst += swdata->w;
                 }
-                
+
                 /* Copy the next plane */
                 src = (Uint8 *) pixels + rect->h * pitch;
                 dst = swdata->pixels + swdata->h * swdata->w;
@@ -391,7 +391,7 @@ SDL_SW_CopyYUVToRGB(SDL_SW_YUVTexture * swdata, const SDL_Rect * srcrect,
         pitch = swdata->stretch->pitch;
     }
     if (SDL_ConvertPixels(swdata->w, swdata->h, swdata->format,
-                          swdata->planes[0], swdata->pitches[0], 
+                          swdata->planes[0], swdata->pitches[0],
                           target_format, pixels, pitch) < 0) {
         return -1;
     }

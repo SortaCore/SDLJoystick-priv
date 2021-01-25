@@ -127,7 +127,7 @@ main(int argc, char *argv[])
     /* Note that we stuff the entire audio buffer into the queue in one
        shot. Most apps would want to feed it a little at a time, as it
        plays, but we're going for simplicity here. */
-    
+
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(loop, 0, 1);
 #else

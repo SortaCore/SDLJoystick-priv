@@ -46,7 +46,7 @@ typedef struct SDL_joylist_item
     SDL_Joystick *joystick;
     int nbuttons, naxes, nhats, nballs;
     int dpad_state;
-    
+
     struct SDL_joylist_item *next;
 } SDL_joylist_item;
 

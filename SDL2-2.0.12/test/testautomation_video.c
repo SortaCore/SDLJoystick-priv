@@ -1104,7 +1104,7 @@ video_getSetWindowSize(void *arg)
   maxwVariation = 5;
   maxhVariation = 5;
 #endif
-  
+
   for (wVariation = 0; wVariation < maxwVariation; wVariation++) {
    for (hVariation = 0; hVariation < maxhVariation; hVariation++) {
     switch(wVariation) {

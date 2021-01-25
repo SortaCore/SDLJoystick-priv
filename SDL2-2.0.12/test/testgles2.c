@@ -99,9 +99,9 @@ quit(int rc)
           } \
         }
 
-/* 
- * Simulates desktop's glRotatef. The matrix is returned in column-major 
- * order. 
+/*
+ * Simulates desktop's glRotatef. The matrix is returned in column-major
+ * order.
  */
 static void
 rotate_matrix(float angle, float x, float y, float z, float *r)
@@ -140,10 +140,10 @@ rotate_matrix(float angle, float x, float y, float z, float *r)
     }
 }
 
-/* 
- * Simulates gluPerspectiveMatrix 
+/*
+ * Simulates gluPerspectiveMatrix
  */
-static void 
+static void
 perspective_matrix(float fovy, float aspect, float znear, float zfar, float *r)
 {
     int i;
@@ -163,7 +163,7 @@ perspective_matrix(float fovy, float aspect, float znear, float zfar, float *r)
     r[15] = 0.0f;
 }
 
-/* 
+/*
  * Multiplies lhs by rhs and writes out to r. All matrices are 4x4 and column
  * major. In-place multiplication is supported.
  */
@@ -188,14 +188,14 @@ multiply_matrix(float *lhs, float *rhs, float *r)
     }
 }
 
-/* 
+/*
  * Create shader, load in source, compile, dump debug as necessary.
  *
  * shader: Pointer to return created shader ID.
  * source: Passed-in shader source code.
  * shader_type: Passed to GL, e.g. GL_VERTEX_SHADER.
  */
-void 
+void
 process_shader(GLuint *shader, const char * source, GLint shader_type)
 {
     GLint status = GL_FALSE;
@@ -344,7 +344,7 @@ const float _colors[] =
     1.0, 0.0, 1.0, /* magenta */
 };
 
-const char* _shader_vert_src = 
+const char* _shader_vert_src =
 " attribute vec4 av4position; "
 " attribute vec3 av3color; "
 " uniform mat4 mvp; "
@@ -354,7 +354,7 @@ const char* _shader_vert_src =
 "    gl_Position = mvp * av4position; "
 " } ";
 
-const char* _shader_frag_src = 
+const char* _shader_frag_src =
 " precision lowp float; "
 " varying vec3 vv3color; "
 " void main() { "
@@ -377,9 +377,9 @@ Render(unsigned int width, unsigned int height, shader_data* data)
 {
     float matrix_rotate[16], matrix_modelview[16], matrix_perspective[16], matrix_mvp[16];
 
-    /* 
+    /*
     * Do some rotation with Euler angles. It is not a fixed axis as
-    * quaterions would be, but the effect is cool. 
+    * quaterions would be, but the effect is cool.
     */
     rotate_matrix((float)data->angle_x, 1.0f, 0.0f, 0.0f, matrix_modelview);
     rotate_matrix((float)data->angle_y, 0.0f, 1.0f, 0.0f, matrix_rotate);
@@ -552,7 +552,7 @@ main(int argc, char *argv[])
         SDL_Log("Out of memory!\n");
         quit(2);
     }
-    
+
     /* Create OpenGL ES contexts */
     for (i = 0; i < state->num_windows; i++) {
         context[i] = SDL_GL_CreateContext(state->windows[i]);
@@ -712,9 +712,9 @@ main(int argc, char *argv[])
         SDL_Log("%2.2f frames per second\n",
                ((double) frames * 1000) / (now - then));
     }
-#if !defined(__ANDROID__) && !defined(__NACL__)  
+#if !defined(__ANDROID__) && !defined(__NACL__)
     quit(0);
-#endif    
+#endif
     return 0;
 }
 

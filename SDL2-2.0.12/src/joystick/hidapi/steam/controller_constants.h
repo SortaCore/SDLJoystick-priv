@@ -56,7 +56,7 @@ enum FeatureReportMessageIDs
 	ID_TURN_OFF_CONTROLLER               = 0x9F,
 
 	ID_GET_DEVICE_INFO                   = 0xA1,
-	
+
 	ID_CALIBRATE_TRACKPADS               = 0xA7,
 	ID_RESERVED_0                        = 0xA8,
 	ID_SET_SERIAL_NUMBER                 = 0xA9,
@@ -173,7 +173,7 @@ typedef enum
 } DigitalIO ;
 
 // Enumeration of generic analog inputs - not all of these will be supported on all controllers (only add to this enum and never change the order)
-typedef enum 
+typedef enum
 {
 	IO_ANALOG_LEFT_STICK_X,
 	IO_ANALOG_LEFT_STICK_Y,
@@ -214,13 +214,13 @@ enum DeviceTypes
 	DEVICE_COUNT
 };
 
-// Scan codes for HID keyboards 
+// Scan codes for HID keyboards
 enum HIDKeyboardKeys
 {
 	KEY_INVALID,
 	KEY_FIRST = 0x04,
-	KEY_A = KEY_FIRST, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, 
-	KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, KEY_1, KEY_2, 
+	KEY_A = KEY_FIRST, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L,
+	KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, KEY_1, KEY_2,
 	KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_RETURN, KEY_ESCAPE, KEY_BACKSPACE, KEY_TAB, KEY_SPACE, KEY_DASH, KEY_EQUALS, KEY_LEFT_BRACKET,
 	KEY_RIGHT_BRACKET, KEY_BACKSLASH, KEY_UNUSED1, KEY_SEMICOLON, KEY_SINGLE_QUOTE, KEY_BACK_TICK, KEY_COMMA, KEY_PERIOD, KEY_FORWARD_SLASH, KEY_CAPSLOCK, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6,
 	KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, KEY_PRINT_SCREEN, KEY_SCROLL_LOCK, KEY_BREAK, KEY_INSERT, KEY_HOME, KEY_PAGE_UP, KEY_DELETE, KEY_END, KEY_PAGE_DOWN, KEY_RIGHT_ARROW,
@@ -272,7 +272,7 @@ enum MouseButtons
 // Gamepad buttons
 enum GamepadButtons
 {
-	GAMEPAD_BTN_TRIGGER_LEFT=1, 
+	GAMEPAD_BTN_TRIGGER_LEFT=1,
 	GAMEPAD_BTN_TRIGGER_RIGHT,
 	GAMEPAD_BTN_A,
 	GAMEPAD_BTN_B,
@@ -362,7 +362,7 @@ typedef enum {
 } TrackpadDPadMode;
 
 // Read-write controller settings (only add to this enum and never change the order)
-typedef enum 
+typedef enum
 {
 	SETTING_MOUSE_SENSITIVITY,
 	SETTING_MOUSE_ACCELERATION,
@@ -416,7 +416,7 @@ typedef enum
 	SETTING_WIRELESS_PACKET_VERSION,
 	SETTING_SLEEP_INACTIVITY_TIMEOUT,
 	SETTING_COUNT,
-	
+
 	// This is a special setting value use for callbacks and should not be set/get explicitly.
 	SETTING_ALL=0xFF
 } ControllerSettings;
@@ -451,14 +451,14 @@ typedef enum
 typedef struct
 {
 	// default,min,max in this array in that order
-	short defaultminmax[SETTING_DEFAULTMINMAXCOUNT]; 
+	short defaultminmax[SETTING_DEFAULTMINMAXCOUNT];
 } SettingValueRange_t;
 
 // below is from controller_constants.c which should be compiled into any code that uses this
 extern const SettingValueRange_t g_DefaultSettingValues[SETTING_COUNT];
 
 // Read-write settings for dongle (only add to this enum and never change the order)
-typedef enum 
+typedef enum
 {
 	DONGLE_SETTING_MOUSE_KEYBOARD_ENABLED,
 	DONGLE_SETTING_COUNT,

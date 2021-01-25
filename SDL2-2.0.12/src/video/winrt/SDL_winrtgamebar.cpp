@@ -52,24 +52,24 @@ MIDL_INTERFACE("1DB9A292-CC78-4173-BE45-B61E67283EA7")
 IGameBarStatics_ : public IInspectable
 {
 public:
-    virtual HRESULT STDMETHODCALLTYPE add_VisibilityChanged( 
+    virtual HRESULT STDMETHODCALLTYPE add_VisibilityChanged(
         __FIEventHandler_1_IInspectable *handler,
         Windows::Foundation::EventRegistrationToken *token) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE remove_VisibilityChanged( 
+
+    virtual HRESULT STDMETHODCALLTYPE remove_VisibilityChanged(
         Windows::Foundation::EventRegistrationToken token) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE add_IsInputRedirectedChanged( 
+
+    virtual HRESULT STDMETHODCALLTYPE add_IsInputRedirectedChanged(
         __FIEventHandler_1_IInspectable *handler,
         Windows::Foundation::EventRegistrationToken *token) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE remove_IsInputRedirectedChanged( 
+
+    virtual HRESULT STDMETHODCALLTYPE remove_IsInputRedirectedChanged(
         Windows::Foundation::EventRegistrationToken token) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE get_Visible( 
+
+    virtual HRESULT STDMETHODCALLTYPE get_Visible(
         boolean *value) = 0;
-    
-    virtual HRESULT STDMETHODCALLTYPE get_IsInputRedirected( 
+
+    virtual HRESULT STDMETHODCALLTYPE get_IsInputRedirected(
         boolean *value) = 0;
 };
 

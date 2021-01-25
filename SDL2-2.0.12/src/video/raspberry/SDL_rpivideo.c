@@ -63,7 +63,7 @@ RPI_Destroy(SDL_VideoDevice * device)
     SDL_free(device);
 }
 
-static int 
+static int
 RPI_GetRefreshRate()
 {
     TV_DISPLAY_STATE_T tvstate;
@@ -73,10 +73,10 @@ RPI_GetRefreshRate()
         HDMI_PROPERTY_PARAM_T property;
         property.property = HDMI_PROPERTY_PIXEL_CLOCK_TYPE;
         vc_tv_hdmi_get_property(&property);
-        return property.param1 == HDMI_PIXEL_CLOCK_TYPE_NTSC ? 
-            tvstate.display.hdmi.frame_rate * (1000.0f/1001.0f) : 
+        return property.param1 == HDMI_PIXEL_CLOCK_TYPE_NTSC ?
+            tvstate.display.hdmi.frame_rate * (1000.0f/1001.0f) :
             tvstate.display.hdmi.frame_rate;
-    } 
+    }
     return 60;  /* Failed to get display state, default to 60 */
 }
 
@@ -215,12 +215,12 @@ RPI_VideoInit(_THIS)
     AddDispManXDisplay(DISPMANX_ID_MAIN_LCD);  /* your default display */
     AddDispManXDisplay(DISPMANX_ID_FORCE_OTHER);  /* an "other" display...maybe DSI-connected screen while HDMI is your main */
 
-#ifdef SDL_INPUT_LINUXEV    
+#ifdef SDL_INPUT_LINUXEV
     if (SDL_EVDEV_Init() < 0) {
         return -1;
     }
-#endif    
-    
+#endif
+
     RPI_InitMouse(_this);
 
     return 1;
@@ -229,9 +229,9 @@ RPI_VideoInit(_THIS)
 void
 RPI_VideoQuit(_THIS)
 {
-#ifdef SDL_INPUT_LINUXEV    
+#ifdef SDL_INPUT_LINUXEV
     SDL_EVDEV_Quit();
-#endif    
+#endif
 }
 
 void
@@ -271,8 +271,8 @@ RPI_CreateWindow(_THIS, SDL_Window * window)
     const char *env;
 
     /* Disable alpha, otherwise the app looks composed with whatever dispman is showing (X11, console,etc) */
-    dispman_alpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS; 
-    dispman_alpha.opacity = 0xFF; 
+    dispman_alpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
+    dispman_alpha.opacity = 0xFF;
     dispman_alpha.mask = 0;
 
     /* Allocate window internal data */
@@ -320,7 +320,7 @@ RPI_CreateWindow(_THIS, SDL_Window * window)
     wdata->dispman_window.width = window->w;
     wdata->dispman_window.height = window->h;
     vc_dispmanx_update_submit_sync(dispman_update);
-    
+
     if (!_this->egl_data) {
         if (SDL_GL_LoadLibrary(NULL) < 0) {
             return -1;

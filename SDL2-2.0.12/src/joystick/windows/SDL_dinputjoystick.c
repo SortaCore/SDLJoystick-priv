@@ -274,14 +274,14 @@ WIN_IsXInputDevice(const GUID* pGuidProductFromDirectInput)
     bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == NULL) goto LCleanup;
     bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == NULL)  goto LCleanup;
 
-    // Connect to WMI 
+    // Connect to WMI
     hr = IWbemLocator_ConnectServer(pIWbemLocator, bstrNamespace, NULL, NULL, 0L,
         0L, NULL, NULL, &pIWbemServices);
     if (FAILED(hr) || pIWbemServices == NULL) {
         goto LCleanup;
     }
 
-    // Switch security level to IMPERSONATE. 
+    // Switch security level to IMPERSONATE.
     CoSetProxyBlanket((IUnknown *)pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
         RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
 
@@ -305,7 +305,7 @@ WIN_IsXInputDevice(const GUID* pGuidProductFromDirectInput)
             hr = IWbemClassObject_Get(pDevices[iDevice], bstrDeviceID, 0L, &var, NULL, NULL);
             if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != NULL) {
                 // Check if the device ID contains "IG_".  If it does, then it's an XInput device
-                // This information can not be found from DirectInput 
+                // This information can not be found from DirectInput
                 if (SDL_wcsstr(var.bstrVal, L"IG_")) {
                     char *bstrVal = WIN_StringToUTF8(var.bstrVal);
 

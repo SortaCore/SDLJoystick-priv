@@ -187,10 +187,10 @@ int render_testPrimitives (void *arg)
 
    ret = SDL_RenderDrawLine(renderer, 79, 59, 50, 30 );
    SDLTest_AssertCheck(ret == 0, "Validate result from SDL_RenderDrawLine, expected: 0, got: %i", ret);
-   
+
    /* Make current */
    SDL_RenderPresent(renderer);
-   
+
    /* See if it's the same. */
    referenceSurface = SDLTest_ImagePrimitives();
    _compare(referenceSurface, ALLOWABLE_ERROR_OPAQUE );

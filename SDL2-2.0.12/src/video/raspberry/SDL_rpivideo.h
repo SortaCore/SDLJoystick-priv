@@ -45,9 +45,9 @@ typedef struct SDL_DisplayData
 typedef struct SDL_WindowData
 {
     EGL_DISPMANX_WINDOW_T dispman_window;
-#if SDL_VIDEO_OPENGL_EGL  
+#if SDL_VIDEO_OPENGL_EGL
     EGLSurface egl_surface;
-#endif    
+#endif
 
     /* Vsync callback cond and mutex */
     SDL_cond  *vsync_cond;

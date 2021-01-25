@@ -190,7 +190,7 @@ int SDL_HIDAPI_SendRumbleAndUnlock(SDL_HIDAPI_Device *device, const Uint8 *data,
     request->size = size;
 
     SDL_AtomicIncRef(&device->rumble_pending);
-    
+
     if (ctx->requests_head) {
         ctx->requests_head->prev = request;
     } else {

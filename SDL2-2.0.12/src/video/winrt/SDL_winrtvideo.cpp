@@ -537,7 +537,7 @@ WINRT_IsCoreWindowActive(CoreWindow ^ coreWindow)
     /* WinRT does not appear to offer API(s) to determine window-activation state,
        at least not that I am aware of in Win8 - Win10.  As such, SDL tracks this
        itself, via window-activation events.
-       
+
        If there *is* an API to track this, it should probably get used instead
        of the following hack (that uses "SDLHelperWindowActivationState").
          -- DavidL.
@@ -550,7 +550,7 @@ WINRT_IsCoreWindowActive(CoreWindow ^ coreWindow)
 
     /* Assume that non-SDL tracked windows are active, although this should
        probably be avoided, if possible.
-       
+
        This might not even be possible, in normal SDL use, at least as of
        this writing (Dec 22, 2015; via latest hg.libsdl.org/SDL clone)  -- DavidL
     */
@@ -702,7 +702,7 @@ WINRT_CreateWindow(_THIS, SDL_Window * window)
             SDL_SetKeyboardFocus(window);
         }
     }
- 
+
     /* Make sure the WinRT app's IFramworkView can post events on
        behalf of SDL:
     */

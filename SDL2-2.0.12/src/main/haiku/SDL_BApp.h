@@ -295,7 +295,7 @@ private:
         }
         HAIKU_SetKeyState(scancode, state);
         SDL_SendKeyboardKey(state, HAIKU_GetScancodeFromBeKey(scancode));
-        
+
         if (state == SDL_PRESSED && SDL_EventState(SDL_TEXTINPUT, SDL_QUERY)) {
             const int8 *keyUtf8;
             ssize_t count;

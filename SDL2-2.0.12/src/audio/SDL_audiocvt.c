@@ -1071,7 +1071,7 @@ SDL_BuildAudioCVT(SDL_AudioCVT * cvt,
            handled by now, but let's be defensive */
       return SDL_SetError("Invalid channel combination");
     }
-    
+
     /* Do rate conversion, if necessary. Updates (cvt). */
     if (SDL_BuildAudioResampleCVT(cvt, dst_channels, src_rate, dst_rate) < 0) {
         return -1;              /* shouldn't happen, but just in case... */
@@ -1553,7 +1553,7 @@ SDL_AudioStreamPut(SDL_AudioStream *stream, const void *buf, int len)
             stream->staging_buffer_filled += len;
             return 0;
         }
- 
+
         /* Fill the staging buffer, process it, and continue */
         amount = (stream->staging_buffer_size - stream->staging_buffer_filled);
         SDL_assert(amount > 0);

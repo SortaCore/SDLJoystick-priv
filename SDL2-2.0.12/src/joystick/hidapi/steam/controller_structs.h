@@ -11,8 +11,8 @@
 // Roll this version forward anytime that you are breaking compatibility of existing
 // message types within ValveInReport_t or the header itself.  Hopefully this should
 // be super rare and instead you shoudl just add new message payloads to the union,
-// or just add fields to the end of existing payload structs which is expected to be 
-// safe in all code consuming these as they should just consume/copy upto the prior size 
+// or just add fields to the end of existing payload structs which is expected to be
+// safe in all code consuming these as they should just consume/copy upto the prior size
 // they were aware of when processing.
 #define k_ValveInReportMsgVersion 0x01
 
@@ -26,24 +26,24 @@ typedef enum
 	ID_CONTROLLER_SECONDARY_STATE = 6,
 	ID_CONTROLLER_BLE_STATE = 7,
 	ID_CONTROLLER_MSG_COUNT
-} ValveInReportMessageIDs; 
+} ValveInReportMessageIDs;
 
-typedef struct 
+typedef struct
 {
 	unsigned short unReportVersion;
-	
+
 	unsigned char ucType;
 	unsigned char ucLength;
-	
+
 } ValveInReportHeader_t;
 
 // State payload
-typedef struct 
+typedef struct
 {
-	// If packet num matches that on your prior call, then the controller state hasn't been changed since 
+	// If packet num matches that on your prior call, then the controller state hasn't been changed since
 	// your last call and there is no need to process it
 	uint32 unPacketNum;
-	
+
 	// Button bitmask and trigger data.
 	union
 	{
@@ -56,15 +56,15 @@ typedef struct
 			unsigned char _pad1[3];
 		} Triggers;
 	} ButtonTriggerData;
-	
+
 	// Left pad coordinates
 	short sLeftPadX;
 	short sLeftPadY;
-	
+
 	// Right pad coordinates
 	short sRightPadX;
 	short sRightPadY;
-	
+
 	// This is redundant, packed above, but still sent over wired
 	unsigned short sTriggerL;
 	unsigned short sTriggerR;
@@ -73,11 +73,11 @@ typedef struct
 	short sAccelX;
 	short sAccelY;
 	short sAccelZ;
-	
+
 	short sGyroX;
 	short sGyroY;
 	short sGyroZ;
-	
+
 	short sGyroQuatW;
 	short sGyroQuatX;
 	short sGyroQuatY;
@@ -85,11 +85,11 @@ typedef struct
 
 } ValveControllerStatePacket_t;
 
-// BLE State payload this has to be re-formatted from the normal state because BLE controller shows up as 
+// BLE State payload this has to be re-formatted from the normal state because BLE controller shows up as
 //a HID device and we don't want to send all the optional parts of the message. Keep in sync with struct above.
 typedef struct
 {
-	// If packet num matches that on your prior call, then the controller state hasn't been changed since 
+	// If packet num matches that on your prior call, then the controller state hasn't been changed since
 	// your last call and there is no need to process it
 	uint32 unPacketNum;
 
@@ -138,7 +138,7 @@ typedef struct
 	// Right mouse deltas
 	short sRightPadMouseDX;
 	short sRightPadMouseDY;
-	
+
 	// Left mouse filtered deltas
 	short sLeftPadMouseFilteredDX;
 	short sLeftPadMouseFilteredDY;
@@ -146,26 +146,26 @@ typedef struct
 	// Right mouse filtered deltas
 	short sRightPadMouseFilteredDX;
 	short sRightPadMouseFilteredDY;
-	
+
 	// Pad Z values
 	unsigned char ucLeftZ;
 	unsigned char ucRightZ;
-	
+
 	// FingerPresent
 	unsigned char ucLeftFingerPresent;
 	unsigned char ucRightFingerPresent;
-	
+
 	// Timestamps
 	unsigned char ucLeftTimestamp;
 	unsigned char ucRightTimestamp;
-	
+
 	// Double tap state
 	unsigned char ucLeftTapState;
 	unsigned char ucRightTapState;
-	
+
 	unsigned int unDigitalIOStates0;
 	unsigned int unDigitalIOStates1;
-	
+
 } ValveControllerDebugPacket_t;
 
 typedef struct
@@ -185,23 +185,23 @@ typedef struct
 } ValveControllerRawTrackpadImage_t;
 
 // Payload for wireless metadata
-typedef struct 
+typedef struct
 {
 	unsigned char ucEventType;
 } SteamControllerWirelessEvent_t;
 
-typedef struct 
+typedef struct
 {
 	// Current packet number.
     unsigned int unPacketNum;
-	
+
 	// Event codes and state information.
     unsigned short sEventCode;
     unsigned short unStateFlags;
 
     // Current battery voltage (mV).
     unsigned short sBatteryVoltage;
-	
+
 	// Current battery level (0-100).
 	unsigned char ucBatteryLevel;
 } SteamControllerStatusEvent_t;
@@ -209,7 +209,7 @@ typedef struct
 typedef struct
 {
 	ValveInReportHeader_t header;
-	
+
 	union
 	{
 		ValveControllerStatePacket_t controllerState;
@@ -220,7 +220,7 @@ typedef struct
 		SteamControllerWirelessEvent_t wirelessEvent;
 		SteamControllerStatusEvent_t statusEvent;
 	} payload;
-	
+
 } ValveInReport_t;
 
 

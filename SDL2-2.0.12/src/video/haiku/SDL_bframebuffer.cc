@@ -57,7 +57,7 @@ int HAIKU_CreateWindowFramebuffer(_THIS, SDL_Window * window,
     }
 
     while(!bwin->Connected()) { snooze(100); }
-    
+
     /* Make sure we have exclusive access to frame buffer data */
     bwin->LockBuffer();
 
@@ -76,7 +76,7 @@ int HAIKU_CreateWindowFramebuffer(_THIS, SDL_Window * window,
     bitmap = new BBitmap(bwin->Bounds(), (color_space)bmode.space,
             false,    /* Views not accepted */
             true);    /* Contiguous memory required */
-            
+
     if(bitmap->InitCheck() != B_OK) {
         delete bitmap;
         return SDL_SetError("Could not initialize back buffer!");
@@ -84,7 +84,7 @@ int HAIKU_CreateWindowFramebuffer(_THIS, SDL_Window * window,
 
 
     bwin->SetBitmap(bitmap);
-    
+
     /* Set the pixel pointer */
     *pixels = bitmap->Bits();
 
@@ -106,7 +106,7 @@ int HAIKU_UpdateWindowFramebuffer(_THIS, SDL_Window * window,
 
     SDL_BWin *bwin = _ToBeWin(window);
 
-#ifdef DRAWTHREAD    
+#ifdef DRAWTHREAD
     bwin->LockBuffer();
     bwin->SetBufferDirty(true);
     bwin->UnlockBuffer();
@@ -120,7 +120,7 @@ int HAIKU_UpdateWindowFramebuffer(_THIS, SDL_Window * window,
 
 int32 HAIKU_DrawThread(void *data) {
     SDL_BWin *bwin = (SDL_BWin*)data;
-    
+
     BScreen bscreen;
     if(!bscreen.IsValid()) {
         return -1;
@@ -149,9 +149,9 @@ int32 HAIKU_DrawThread(void *data) {
                 /* Get addresses of the start of each clipping rectangle */
                 int32 width = clips[i].right - clips[i].left + 1;
                 int32 height = clips[i].bottom - clips[i].top + 1;
-                bufferpx = bwin->GetBufferPx() + 
+                bufferpx = bwin->GetBufferPx() +
                     clips[i].top * bufferPitch + clips[i].left * BPP;
-                windowpx = (uint8*)bitmap->Bits() + 
+                windowpx = (uint8*)bitmap->Bits() +
                     clips[i].top * windowPitch + clips[i].left * BPP -
                     windowSub;
 
@@ -177,15 +177,15 @@ escape:
             snooze(16000);
         }
     }
-    
+
     return B_OK;
 }
 
 void HAIKU_DestroyWindowFramebuffer(_THIS, SDL_Window * window) {
     SDL_BWin *bwin = _ToBeWin(window);
-    
+
     bwin->LockBuffer();
-    
+
     /* Free and clear the window buffer */
     BBitmap *bitmap = bwin->GetBitmap();
     delete bitmap;
@@ -230,9 +230,9 @@ static int32 HAIKU_UpdateOnce(SDL_Window *window) {
             /* Get addresses of the start of each clipping rectangle */
             int32 width = clips[i].right - clips[i].left + 1;
             int32 height = clips[i].bottom - clips[i].top + 1;
-            bufferpx = bwin->GetBufferPx() + 
+            bufferpx = bwin->GetBufferPx() +
                 clips[i].top * bufferPitch + clips[i].left * BPP;
-            windowpx = windowBaseAddress + 
+            windowpx = windowBaseAddress +
                 clips[i].top * windowPitch + clips[i].left * BPP - windowSub;
 
             /* Copy each row of pixels from the window buffer into the frame

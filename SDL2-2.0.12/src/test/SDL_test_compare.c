@@ -103,7 +103,7 @@ int SDLTest_CompareSurfaces(SDL_Surface *surface, SDL_Surface *referenceSurface,
    _CompareSurfaceCount++;
    if (ret != 0) {
       SDLTest_LogError("Comparison of pixels with allowable error of %i failed %i times.", allowable_error, ret);
-      SDLTest_LogError("First detected occurrence at position %i,%i with a squared RGB-difference of %i.", sampleErrorX, sampleErrorY, sampleDist); 
+      SDLTest_LogError("First detected occurrence at position %i,%i with a squared RGB-difference of %i.", sampleErrorX, sampleErrorY, sampleDist);
       SDL_snprintf(imageFilename, 127, "CompareSurfaces%04d_TestOutput.bmp", _CompareSurfaceCount);
       SDL_SaveBMP(surface, imageFilename);
       SDL_snprintf(referenceFilename, 127, "CompareSurfaces%04d_Reference.bmp", _CompareSurfaceCount);

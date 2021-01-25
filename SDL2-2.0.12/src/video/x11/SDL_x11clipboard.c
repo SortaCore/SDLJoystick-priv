@@ -59,8 +59,8 @@ GetWindow(_THIS)
     return data->clipboard_window;
 }
 
-/* We use our own cut-buffer for intermediate storage instead of  
-   XA_CUT_BUFFER0 because their use isn't really defined for holding UTF8. */ 
+/* We use our own cut-buffer for intermediate storage instead of
+   XA_CUT_BUFFER0 because their use isn't really defined for holding UTF8. */
 Atom
 X11_GetSDLCutBufferClipboardType(Display *display)
 {

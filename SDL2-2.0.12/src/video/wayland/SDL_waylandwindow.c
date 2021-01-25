@@ -715,7 +715,7 @@ int Wayland_CreateWindow(_THIS, SDL_Window *window)
 
         /* Create the GLES window surface */
         data->egl_surface = SDL_EGL_CreateSurface(_this, (NativeWindowType) data->egl_window);
-    
+
         if (data->egl_surface == EGL_NO_SURFACE) {
             return SDL_SetError("failed to create an EGL window surface");
         }
@@ -856,7 +856,7 @@ void Wayland_SetWindowTitle(_THIS, SDL_Window * window)
 {
     SDL_WindowData *wind = window->driverdata;
     SDL_VideoData *viddata = (SDL_VideoData *) _this->driverdata;
-    
+
     if (window->title != NULL) {
         if (viddata->shell.xdg) {
             xdg_toplevel_set_title(wind->shell_surface.xdg.roleobj.toplevel, window->title);

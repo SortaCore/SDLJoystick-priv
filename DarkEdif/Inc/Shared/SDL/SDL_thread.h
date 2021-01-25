@@ -299,7 +299,7 @@ extern DECLSPEC void SDLCALL SDL_DetachThread(SDL_Thread * thread);
  *  \code
  *  static SDL_SpinLock tls_lock;
  *  static SDL_TLSID thread_local_storage;
- * 
+ *
  *  void SetMyThreadData(void *value)
  *  {
  *      if (!thread_local_storage) {
@@ -311,7 +311,7 @@ extern DECLSPEC void SDLCALL SDL_DetachThread(SDL_Thread * thread);
  *      }
  *      SDL_TLSSet(thread_local_storage, value, 0);
  *  }
- *  
+ *
  *  void *GetMyThreadData(void)
  *  {
  *      return SDL_TLSGet(thread_local_storage);

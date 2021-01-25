@@ -51,7 +51,7 @@ static int _InitWindow(_THIS, SDL_Window *window) {
         window->x + window->w - 1,    //BeWindows have an off-by-one px w/h thing
         window->y + window->h - 1
     );
-    
+
     if(window->flags & SDL_WINDOW_FULLSCREEN) {
         /* TODO: Add support for this flag */
         printf(__FILE__": %d!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",__LINE__);
@@ -81,7 +81,7 @@ int HAIKU_CreateWindow(_THIS, SDL_Window *window) {
     if (_InitWindow(_this, window) < 0) {
         return -1;
     }
-    
+
     /* Start window loop */
     _ToBeWin(window)->Show();
     return 0;
@@ -92,29 +92,29 @@ int HAIKU_CreateWindowFrom(_THIS, SDL_Window * window, const void *data) {
     SDL_BWin *otherBWin = (SDL_BWin*)data;
     if(!otherBWin->LockLooper())
         return -1;
-    
+
     /* Create the new window and initialize its members */
     window->x = (int)otherBWin->Frame().left;
     window->y = (int)otherBWin->Frame().top;
     window->w = (int)otherBWin->Frame().Width();
     window->h = (int)otherBWin->Frame().Height();
-    
+
     /* Set SDL flags */
     if(!(otherBWin->Flags() & B_NOT_RESIZABLE)) {
         window->flags |= SDL_WINDOW_RESIZABLE;
     }
-    
+
     /* If we are out of memory, return the error code */
     if (_InitWindow(_this, window) < 0) {
         return -1;
     }
-    
+
     /* TODO: Add any other SDL-supported window attributes here */
     _ToBeWin(window)->SetTitle(otherBWin->Title());
-    
+
     /* Start window loop and unlock the other window */
     _ToBeWin(window)->Show();
-    
+
     otherBWin->UnlockLooper();
     return 0;
 }
@@ -191,7 +191,7 @@ void HAIKU_SetWindowFullscreen(_THIS, SDL_Window * window,
     BMessage msg(BWIN_FULLSCREEN);
     msg.AddBool("fullscreen", fullscreen);
     _ToBeWin(window)->PostMessage(&msg);
-    
+
 }
 
 int HAIKU_SetWindowGammaRamp(_THIS, SDL_Window * window, const Uint16 * ramp) {
@@ -233,7 +233,7 @@ SDL_bool HAIKU_GetWindowWMInfo(_THIS, SDL_Window * window,
 
 
 
- 
+
 #ifdef __cplusplus
 }
 #endif

@@ -342,7 +342,7 @@ Wayland_ShowCursor(SDL_Cursor *cursor)
                                0,
                                0);
     }
-    
+
     return 0;
 }
 

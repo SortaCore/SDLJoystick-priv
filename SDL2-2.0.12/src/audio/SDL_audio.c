@@ -1677,7 +1677,7 @@ SDL_SilenceValueForFormat(const SDL_AudioFormat format)
             return 0x80;
 
         default: break;
-    }            
+    }
 
     return 0x00;
 }

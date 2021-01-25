@@ -47,7 +47,7 @@ typedef enum
     k_EPS4ReportIdDisconnectMessage = 226,
 } EPS4ReportId;
 
-typedef enum 
+typedef enum
 {
     k_ePS4FeatureReportIdGyroCalibration_USB = 0x02,
     k_ePS4FeatureReportIdGyroCalibration_BT = 0x05,

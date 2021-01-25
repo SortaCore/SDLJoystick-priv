@@ -411,7 +411,7 @@ D3D11_CreateDeviceResources(SDL_Renderer * renderer)
      * Don't forget to declare your application's minimum required feature level in its
      * description.  All applications are assumed to support 9.1 unless otherwise stated.
      */
-    D3D_FEATURE_LEVEL featureLevels[] = 
+    D3D_FEATURE_LEVEL featureLevels[] =
     {
         D3D_FEATURE_LEVEL_11_1,
         D3D_FEATURE_LEVEL_11_0,
@@ -911,7 +911,7 @@ D3D11_CreateWindowSizeDependentResources(SDL_Renderer * renderer)
             /* If the device was removed for any reason, a new device and swap chain will need to be created. */
             D3D11_HandleDeviceLost(renderer);
 
-            /* Everything is set up now. Do not continue execution of this method. HandleDeviceLost will reenter this method 
+            /* Everything is set up now. Do not continue execution of this method. HandleDeviceLost will reenter this method
              * and correctly set up the new device.
              */
             goto done;
@@ -926,7 +926,7 @@ D3D11_CreateWindowSizeDependentResources(SDL_Renderer * renderer)
             goto done;
         }
     }
-    
+
 #if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
     /* Set the proper rotation for the swap chain.
      *
@@ -1433,7 +1433,7 @@ D3D11_LockTexture(SDL_Renderer * renderer, SDL_Texture * texture,
     if (textureData->stagingTexture) {
         return SDL_SetError("texture is already locked");
     }
-    
+
     /* Create a 'staging' texture, which will be used to write to a portion
      * of the main texture.  This is necessary, as Direct3D 11.1 does not
      * have the ability to write a CPU-bound pixel buffer to a rectangular
@@ -1472,7 +1472,7 @@ D3D11_LockTexture(SDL_Renderer * renderer, SDL_Texture * texture,
         return -1;
     }
 
-    /* Make note of where the staging texture will be written to 
+    /* Make note of where the staging texture will be written to
      * (on a call to SDL_UnlockTexture):
      */
     textureData->lockedTexturePositionX = rect->x;
@@ -1491,7 +1491,7 @@ D3D11_UnlockTexture(SDL_Renderer * renderer, SDL_Texture * texture)
 {
     D3D11_RenderData *rendererData = (D3D11_RenderData *) renderer->driverdata;
     D3D11_TextureData *textureData = (D3D11_TextureData *) texture->driverdata;
-    
+
     if (!textureData) {
         return;
     }
@@ -1528,7 +1528,7 @@ static void
 D3D11_SetTextureScaleMode(SDL_Renderer * renderer, SDL_Texture * texture, SDL_ScaleMode scaleMode)
 {
     D3D11_TextureData *textureData = (D3D11_TextureData *) texture->driverdata;
-    
+
     if (!textureData) {
         return;
     }
@@ -2468,7 +2468,7 @@ D3D11_RenderPresent(SDL_Renderer * renderer)
     data->currentRenderTargetView = NULL;
 
     if (FAILED(result) && result != DXGI_ERROR_WAS_STILL_DRAWING) {
-        /* If the device was removed either by a disconnect or a driver upgrade, we 
+        /* If the device was removed either by a disconnect or a driver upgrade, we
          * must recreate all device resources.
          *
          * TODO, WinRT: consider throwing an exception if D3D11_RenderPresent fails, especially if there is a way to salvage debug info from users' machines
@@ -2538,8 +2538,8 @@ D3D11_CreateRenderer(SDL_Window * window, Uint32 flags)
      *
      *  - with the D3D11 debug runtime turned ON, vsync gets automatically
      *    turned back on, and the following gets output to the debug console:
-     *    
-     *    DXGI ERROR: IDXGISwapChain::Present: Interval 0 is not supported, changed to Interval 1. [ UNKNOWN ERROR #1024: ] 
+     *
+     *    DXGI ERROR: IDXGISwapChain::Present: Interval 0 is not supported, changed to Interval 1. [ UNKNOWN ERROR #1024: ]
      */
     renderer->info.flags |= SDL_RENDERER_PRESENTVSYNC;
 #else

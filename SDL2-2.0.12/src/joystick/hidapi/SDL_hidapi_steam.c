@@ -47,7 +47,7 @@ typedef enum
 
 typedef uint32_t uint32;
 typedef uint64_t uint64;
-    
+
 #include "steam/controller_constants.h"
 #include "steam/controller_structs.h"
 
@@ -56,17 +56,17 @@ typedef struct SteamControllerStateInternal_t
     // Controller Type for this Controller State
     uint32 eControllerType;
 
-    // If packet num matches that on your prior call, then the controller state hasn't been changed since 
+    // If packet num matches that on your prior call, then the controller state hasn't been changed since
     // your last call and there is no need to process it
     uint32 unPacketNum;
-    
+
     // bit flags for each of the buttons
     uint64 ulButtons;
-    
+
     // Left pad coordinates
     short sLeftPadX;
     short sLeftPadY;
-    
+
     // Right pad coordinates
     short sRightPadX;
     short sRightPadY;
@@ -74,7 +74,7 @@ typedef struct SteamControllerStateInternal_t
     // Center pad coordinates
     short sCenterPadX;
     short sCenterPadY;
-    
+
     // Left analog stick coordinates
     short sLeftStickX;
     short sLeftStickY;
@@ -82,34 +82,34 @@ typedef struct SteamControllerStateInternal_t
     // Right analog stick coordinates
     short sRightStickX;
     short sRightStickY;
-    
+
     unsigned short sTriggerL;
     unsigned short sTriggerR;
-    
+
     short sAccelX;
     short sAccelY;
     short sAccelZ;
-    
+
     short sGyroX;
     short sGyroY;
     short sGyroZ;
-    
+
     float sGyroQuatW;
     float sGyroQuatX;
     float sGyroQuatY;
     float sGyroQuatZ;
-    
+
     short sGyroSteeringAngle;
-    
+
     unsigned short sBatteryLevel;
 
     // Pressure sensor data.
     unsigned short sPressurePadLeft;
     unsigned short sPressurePadRight;
-    
+
     unsigned short sPressureBumperLeft;
     unsigned short sPressureBumperRight;
-    
+
     // Internal state data
     short sPrevLeftPad[2];
     short sPrevLeftStick[2];
@@ -207,7 +207,7 @@ static uint8_t GetSegmentHeader( int nSegmentNumber, bool bLastPacket )
     header |= nSegmentNumber;
     if ( bLastPacket )
         header |= REPORT_SEGMENT_LAST_FLAG;
-    
+
     return header;
 }
 
@@ -247,7 +247,7 @@ static int WriteSegmentToSteamControllerPacketAssembler( SteamControllerPacketAs
             // We may get keyboard/mouse input events until controller stops sending them
             return 0;
         }
-        
+
         if ( nSegmentLength != MAX_REPORT_SEGMENT_SIZE )
         {
             printf( "Bad segment size! %d\n", (int)nSegmentLength );
@@ -255,21 +255,21 @@ static int WriteSegmentToSteamControllerPacketAssembler( SteamControllerPacketAs
             ResetSteamControllerPacketAssembler( pAssembler );
             return -1;
         }
-        
+
         uint8_t uSegmentHeader = pSegment[ 1 ];
         DPRINTF("GOT PACKET HEADER = 0x%x\n", uSegmentHeader);
-        
+
         if ( ( uSegmentHeader & REPORT_SEGMENT_DATA_FLAG ) == 0 )
         {
             // We get empty segments, just ignore them
             return 0;
         }
-        
+
         int nSegmentNumber = uSegmentHeader & 0x07;
         if ( nSegmentNumber != pAssembler->nExpectedSegmentNumber )
         {
             ResetSteamControllerPacketAssembler( pAssembler );
-            
+
             if ( nSegmentNumber )
             {
                 // This happens occasionally
@@ -278,17 +278,17 @@ static int WriteSegmentToSteamControllerPacketAssembler( SteamControllerPacketAs
                 return -1;
             }
         }
-        
+
         memcpy( pAssembler->uBuffer + nSegmentNumber * MAX_REPORT_SEGMENT_PAYLOAD_SIZE,
                pSegment + 2, // ignore header and report number
                MAX_REPORT_SEGMENT_PAYLOAD_SIZE );
-        
+
         if ( uSegmentHeader & REPORT_SEGMENT_LAST_FLAG )
         {
             pAssembler->nExpectedSegmentNumber = 0;
             return ( nSegmentNumber + 1 ) * MAX_REPORT_SEGMENT_PAYLOAD_SIZE;
         }
-        
+
         pAssembler->nExpectedSegmentNumber++;
     }
     else
@@ -299,7 +299,7 @@ static int WriteSegmentToSteamControllerPacketAssembler( SteamControllerPacketAs
                nSegmentLength );
         return nSegmentLength;
     }
-    
+
     return 0;
 }
 
@@ -310,23 +310,23 @@ static int SetFeatureReport( hid_device *dev, unsigned char uBuffer[65], int nAc
     DPRINTF("SetFeatureReport %p %p %d\n", dev, uBuffer, nActualDataLen);
     int nRet = -1;
     bool bBle = true; // only wireless/BLE for now, though macOS could do wired in the future
-    
+
     if ( bBle )
     {
         if ( nActualDataLen < 1 )
             return -1;
-        
+
         int nSegmentNumber = 0;
         uint8_t uPacketBuffer[ MAX_REPORT_SEGMENT_SIZE ];
-        
+
         // Skip report number in data
         unsigned char *pBufferPtr = uBuffer + 1;
         nActualDataLen--;
-        
+
         while ( nActualDataLen > 0 )
         {
             int nBytesInPacket = nActualDataLen > MAX_REPORT_SEGMENT_PAYLOAD_SIZE ? MAX_REPORT_SEGMENT_PAYLOAD_SIZE : nActualDataLen;
-            
+
             nActualDataLen -= nBytesInPacket;
 
             // Construct packet
@@ -334,15 +334,15 @@ static int SetFeatureReport( hid_device *dev, unsigned char uBuffer[65], int nAc
             uPacketBuffer[ 0 ] = BLE_REPORT_NUMBER;
             uPacketBuffer[ 1 ] = GetSegmentHeader( nSegmentNumber, nActualDataLen == 0 );
             memcpy( &uPacketBuffer[ 2 ], pBufferPtr, nBytesInPacket );
-            
+
             pBufferPtr += nBytesInPacket;
             nSegmentNumber++;
-            
+
             nRet = hid_send_feature_report( dev, uPacketBuffer, sizeof( uPacketBuffer ) );
             DPRINTF("SetFeatureReport() ret = %d\n", nRet);
         }
     }
-    
+
     return nRet;
 }
 
@@ -356,7 +356,7 @@ static int GetFeatureReport( hid_device *dev, unsigned char uBuffer[65] )
     {
         SteamControllerPacketAssembler assembler;
         InitializeSteamControllerPacketAssembler( &assembler );
-        
+
         int nRetries = 0;
         uint8_t uSegmentBuffer[ MAX_REPORT_SEGMENT_SIZE ];
         while( nRetries < BLE_MAX_READ_RETRIES )
@@ -366,19 +366,19 @@ static int GetFeatureReport( hid_device *dev, unsigned char uBuffer[65] )
             nRet = hid_get_feature_report( dev, uSegmentBuffer, sizeof( uSegmentBuffer ) );
             DPRINTF( "GetFeatureReport ble ret=%d\n", nRet );
             HEXDUMP( uSegmentBuffer, nRet );
-            
+
             // Zero retry counter if we got data
             if ( nRet > 2 && ( uSegmentBuffer[ 1 ] & REPORT_SEGMENT_DATA_FLAG ) )
                 nRetries = 0;
             else
                 nRetries++;
-            
+
             if ( nRet > 0 )
             {
                 int nPacketLength = WriteSegmentToSteamControllerPacketAssembler( &assembler,
                                                                                  uSegmentBuffer,
                                                                                  nRet );
-                
+
                 if ( nPacketLength > 0 && nPacketLength < 65 )
                 {
                     // Leave space for "report number"
@@ -387,13 +387,13 @@ static int GetFeatureReport( hid_device *dev, unsigned char uBuffer[65] )
                     return nPacketLength;
                 }
             }
-            
-            
+
+
         }
         printf("Could not get a full ble packet after %d retries\n", nRetries );
         return -1;
     }
-    
+
     return nRet;
 }
 
@@ -404,13 +404,13 @@ static int ReadResponse( hid_device *dev, uint8_t uBuffer[65], int nExpectedResp
 
     if ( nRet < 0 )
         return nRet;
-    
+
     DPRINTF("ReadResponse got %d bytes of data: ", nRet );
     HEXDUMP( uBuffer, nRet );
-    
+
     if ( uBuffer[1] != nExpectedResponse )
         return -1;
-    
+
     return nRet;
 }
 
@@ -423,7 +423,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
     // Firmware quirk: Set Feature and Get Feature requests always require a 65-byte buffer.
     unsigned char buf[65];
     int res = -1;
-    
+
     buf[0] = 0;
     buf[1] = ID_GET_ATTRIBUTES_VALUES;
     res = SetFeatureReport( dev, buf, 2 );
@@ -433,7 +433,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
             printf( "GET_ATTRIBUTES_VALUES failed for controller %p\n", dev );
         return false;
     }
-    
+
     // Retrieve GET_ATTRIBUTES_VALUES result
     // Wireless controller endpoints without a connected controller will return nAttrs == 0
     res = ReadResponse( dev, buf, ID_GET_ATTRIBUTES_VALUES );
@@ -444,7 +444,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
             printf( "Bad GET_ATTRIBUTES_VALUES response for controller %p\n", dev );
         return false;
     }
-    
+
     int nAttributesLength = buf[ 2 ];
     if ( nAttributesLength > res )
     {
@@ -452,7 +452,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
             printf( "Bad GET_ATTRIBUTES_VALUES response for controller %p\n", dev );
         return false;
     }
-    
+
     // Clear digital button mappings
     buf[0] = 0;
     buf[1] = ID_CLEAR_DIGITAL_MAPPINGS;
@@ -463,7 +463,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
             printf( "CLEAR_DIGITAL_MAPPINGS failed for controller %p\n", dev );
         return false;
     }
-    
+
     // Reset the default settings
     memset( buf, 0, 65 );
     buf[1] = ID_LOAD_DEFAULT_SETTINGS;
@@ -475,7 +475,7 @@ static bool ResetSteamController( hid_device *dev, bool bSuppressErrorSpew )
             printf( "LOAD_DEFAULT_SETTINGS failed for controller %p\n", dev );
         return false;
     }
-    
+
     // Apply custom settings - clear trackpad modes (cancel mouse emulation), etc
     int nSettings = 0;
 #define ADD_SETTING(SETTING, VALUE)    \
@@ -483,7 +483,7 @@ buf[3+nSettings*3] = SETTING;    \
 buf[3+nSettings*3+1] = ((uint16_t)VALUE)&0xFF; \
 buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
 ++nSettings;
-    
+
     memset( buf, 0, 65 );
     buf[1] = ID_SET_SETTINGS_VALUES;
     ADD_SETTING( SETTING_WIRELESS_PACKET_VERSION, 2 );
@@ -498,7 +498,7 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
     ADD_SETTING( SETTING_SMOOTH_ABSOLUTE_MOUSE, 0 );
 #endif
     buf[2] = nSettings*3;
-    
+
     res = SetFeatureReport( dev, buf, 3+nSettings*3 );
     if ( res < 0 )
     {
@@ -506,7 +506,7 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
             printf( "SET_SETTINGS failed for controller %p\n", dev );
         return false;
     }
-    
+
 #ifdef ENABLE_MOUSE_MODE
     // Wait for ID_CLEAR_DIGITAL_MAPPINGS to be processed on the controller
     bool bMappingsCleared = false;
@@ -523,14 +523,14 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
             printf( "GET_DIGITAL_MAPPINGS failed for controller %p\n", dev );
             return false;
         }
-        
+
         res = ReadResponse( dev, buf, ID_GET_DIGITAL_MAPPINGS );
         if ( res < 0 || buf[1] != ID_GET_DIGITAL_MAPPINGS )
         {
             printf( "Bad GET_DIGITAL_MAPPINGS response for controller %p\n", dev );
             return false;
         }
-        
+
         // If the length of the digital mappings result is not 1 (index byte, no mappings) then clearing hasn't executed
         if ( buf[2] == 1 && buf[3] == 0xFF )
         {
@@ -539,12 +539,12 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
         }
         usleep( CONTROLLER_CONFIGURATION_DELAY_US );
     }
-    
+
     if ( !bMappingsCleared && !bSuppressErrorSpew )
     {
         printf( "Warning: CLEAR_DIGITAL_MAPPINGS never completed for controller %p\n", dev );
     }
-    
+
     // Set our new mappings
     memset( buf, 0, 65 );
     buf[1] = ID_SET_DIGITAL_MAPPINGS;
@@ -555,7 +555,7 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
     buf[6] = IO_DIGITAL_BUTTON_LEFT_TRIGGER;
     buf[7] = DEVICE_MOUSE;
     buf[8] = MOUSE_BTN_RIGHT;
-    
+
     res = SetFeatureReport( dev, buf, 9 );
     if ( res < 0 )
     {
@@ -564,7 +564,7 @@ buf[3+nSettings*3+2] = ((uint16_t)VALUE)>>8; \
         return false;
     }
 #endif // ENABLE_MOUSE_MODE
-    
+
     return true;
 }
 
@@ -588,7 +588,7 @@ static void CloseSteamController( hid_device *dev )
     // Switch the Steam Controller back to lizard mode so it works with the OS
     unsigned char buf[65];
     int nSettings = 0;
-    
+
     // Reset digital button mappings
     memset( buf, 0, 65 );
     buf[1] = ID_SET_DEFAULT_DIGITAL_MAPPINGS;

@@ -93,12 +93,12 @@ LoadSprite(char *file, SDL_Renderer *renderer)
 
 void
 DrawOnViewport(SDL_Renderer * renderer, SDL_Rect viewport)
-{    
+{
     SDL_Rect rect;
 
     /* Set the viewport */
     SDL_RenderSetViewport(renderer, &viewport);
-    
+
     /* Draw a gray background */
     SDL_SetRenderDrawColor(renderer, 0x80, 0x80, 0x80, 0xFF);
     SDL_RenderClear(renderer);
@@ -120,7 +120,7 @@ DrawOnViewport(SDL_Renderer * renderer, SDL_Rect viewport)
     /* Test diagonal lines */
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
     SDL_RenderDrawLine(renderer, 0, 0, viewport.w-1, viewport.h-1);
-    SDL_RenderDrawLine(renderer, viewport.w-1, 0, 0, viewport.h-1);                      
+    SDL_RenderDrawLine(renderer, viewport.w-1, 0, 0, viewport.h-1);
 
     /* Test outside points */
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x00, 0xFF);

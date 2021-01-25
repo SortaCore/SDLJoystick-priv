@@ -32,7 +32,7 @@ typedef struct SDL_PrivateGLESData
 {
   /* 1401 If the struct-declaration-list contains no named members, the behavior is undefined. */
   /* warning: empty struct has size 0 in C, size 1 in C++ [-Wc++-compat] */
-  int dummy; 
+  int dummy;
 } SDL_PrivateGLESData;
 
 /* OpenGLES functions */

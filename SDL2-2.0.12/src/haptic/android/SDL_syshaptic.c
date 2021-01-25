@@ -328,7 +328,7 @@ Android_AddHaptic(int device_id, const char *name)
     return numhaptics;
 }
 
-int 
+int
 Android_RemoveHaptic(int device_id)
 {
     SDL_hapticlist_item *item;

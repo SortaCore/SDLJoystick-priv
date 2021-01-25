@@ -69,10 +69,10 @@ test_multi_audio(int devcount)
 {
     int keep_going = 1;
     int i;
-    
-#ifdef __ANDROID__  
+
+#ifdef __ANDROID__
     SDL_Event event;
-  
+
     /* Create a Window to get fully initialized event processing for testing pause on Android. */
     SDL_CreateWindow("testmultiaudio", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, 0);
 #endif
@@ -101,10 +101,10 @@ test_multi_audio(int devcount)
             emscripten_set_main_loop(loop, 0, 1);
 #else
             while (!SDL_AtomicGet(&cbd[0].done)) {
-                #ifdef __ANDROID__                
+                #ifdef __ANDROID__
                 /* Empty queue, some application events would prevent pause. */
                 while (SDL_PollEvent(&event)){}
-                #endif                
+                #endif
                 SDL_Delay(100);
             }
             SDL_PauseAudioDevice(cbd[0].dev, 1);
@@ -139,10 +139,10 @@ test_multi_audio(int devcount)
                 keep_going = 1;
             }
         }
-        #ifdef __ANDROID__        
+        #ifdef __ANDROID__
         /* Empty queue, some application events would prevent pause. */
         while (SDL_PollEvent(&event)){}
-        #endif        
+        #endif
 
         SDL_Delay(100);
     }
@@ -175,7 +175,7 @@ main(int argc, char **argv)
     }
 
     SDL_Log("Using audio driver: %s\n", SDL_GetCurrentAudioDriver());
-    
+
     devcount = SDL_GetNumAudioDevices(0);
     if (devcount < 1) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Don't see any specific audio devices!\n");

@@ -51,7 +51,7 @@ write_pipe(int fd, const void* buffer, size_t total_length, size_t *pos)
     ready = SDL_IOReady(fd, SDL_TRUE, 1 * 1000);
 
     sigemptyset(&sig_set);
-    sigaddset(&sig_set, SIGPIPE);  
+    sigaddset(&sig_set, SIGPIPE);
 
 #if SDL_THREADS_DISABLED
     sigprocmask(SIG_BLOCK, &sig_set, &old_sig_set);
@@ -95,7 +95,7 @@ read_pipe(int fd, void** buffer, size_t* total_length, SDL_bool null_terminate)
     size_t pos = 0;
 
     ready = SDL_IOReady(fd, SDL_FALSE, 1 * 1000);
-  
+
     if (ready == 0) {
         bytes_read = SDL_SetError("Pipe timeout");
     } else if (ready < 0) {
@@ -118,8 +118,8 @@ read_pipe(int fd, void** buffer, size_t* total_length, SDL_bool null_terminate)
             output_buffer = SDL_malloc(new_buffer_length);
         } else {
             output_buffer = SDL_realloc(*buffer, new_buffer_length);
-        }           
-        
+        }
+
         if (output_buffer == NULL) {
             bytes_read = SDL_OutOfMemory();
         } else {
@@ -128,7 +128,7 @@ read_pipe(int fd, void** buffer, size_t* total_length, SDL_bool null_terminate)
             if (null_terminate == SDL_TRUE) {
                 SDL_memset((Uint8*)output_buffer + (new_buffer_length - 1), 0, 1);
             }
-            
+
             *buffer = output_buffer;
         }
     }
@@ -158,28 +158,28 @@ Wayland_convert_mime_type(const char *mime_type)
             break;
         }
     }
-    
+
     return found;
 }
 
 static SDL_MimeDataList*
-mime_data_list_find(struct wl_list* list, 
+mime_data_list_find(struct wl_list* list,
                     const char* mime_type)
 {
     SDL_MimeDataList *found = NULL;
 
     SDL_MimeDataList *mime_list = NULL;
-    wl_list_for_each(mime_list, list, link) { 
+    wl_list_for_each(mime_list, list, link) {
         if (strcmp(mime_list->mime_type, mime_type) == 0) {
             found = mime_list;
             break;
         }
-    }    
+    }
     return found;
 }
 
 static int
-mime_data_list_add(struct wl_list* list, 
+mime_data_list_add(struct wl_list* list,
                    const char* mime_type,
                    void* buffer, size_t length)
 {
@@ -206,7 +206,7 @@ mime_data_list_add(struct wl_list* list,
             }
         }
     }
-    
+
     if (mime_data != NULL && buffer != NULL && length > 0) {
         if (mime_data->data != NULL) {
             SDL_free(mime_data->data);
@@ -221,28 +221,28 @@ mime_data_list_add(struct wl_list* list,
 static void
 mime_data_list_free(struct wl_list *list)
 {
-    SDL_MimeDataList *mime_data = NULL; 
+    SDL_MimeDataList *mime_data = NULL;
     SDL_MimeDataList *next = NULL;
 
     wl_list_for_each_safe(mime_data, next, list, link) {
         if (mime_data->data != NULL) {
             SDL_free(mime_data->data);
-        }        
+        }
         if (mime_data->mime_type != NULL) {
             SDL_free(mime_data->mime_type);
         }
-        SDL_free(mime_data);       
-    } 
+        SDL_free(mime_data);
+    }
 }
 
-ssize_t 
-Wayland_data_source_send(SDL_WaylandDataSource *source,  
+ssize_t
+Wayland_data_source_send(SDL_WaylandDataSource *source,
                          const char *mime_type, int fd)
 {
     size_t written_bytes = 0;
     ssize_t status = 0;
     SDL_MimeDataList *mime_data = NULL;
- 
+
     mime_type = Wayland_convert_mime_type(mime_type);
     mime_data = mime_data_list_find(&source->mimes,
                                                       mime_type);
@@ -262,7 +262,7 @@ Wayland_data_source_send(SDL_WaylandDataSource *source,
 int Wayland_data_source_add_data(SDL_WaylandDataSource *source,
                                  const char *mime_type,
                                  const void *buffer,
-                                 size_t length) 
+                                 size_t length)
 {
     int status = 0;
     if (length > 0) {
@@ -271,14 +271,14 @@ int Wayland_data_source_add_data(SDL_WaylandDataSource *source,
             status = SDL_OutOfMemory();
         } else {
             SDL_memcpy(internal_buffer, buffer, length);
-            status = mime_data_list_add(&source->mimes, mime_type, 
+            status = mime_data_list_add(&source->mimes, mime_type,
                                         internal_buffer, length);
         }
     }
     return status;
 }
 
-SDL_bool 
+SDL_bool
 Wayland_data_source_has_mime(SDL_WaylandDataSource *source,
                              const char *mime_type)
 {
@@ -290,7 +290,7 @@ Wayland_data_source_has_mime(SDL_WaylandDataSource *source,
     return found;
 }
 
-void* 
+void*
 Wayland_data_source_get_data(SDL_WaylandDataSource *source,
                              size_t *length, const char* mime_type,
                              SDL_bool null_terminate)
@@ -327,13 +327,13 @@ Wayland_data_source_destroy(SDL_WaylandDataSource *source)
     }
 }
 
-void* 
+void*
 Wayland_data_offer_receive(SDL_WaylandDataOffer *offer,
                            size_t *length, const char* mime_type,
                            SDL_bool null_terminate)
 {
     SDL_WaylandDataDevice *data_device = NULL;
- 
+
     int pipefd[2];
     void *buffer = NULL;
     *length = 0;
@@ -351,14 +351,14 @@ Wayland_data_offer_receive(SDL_WaylandDataOffer *offer,
         WAYLAND_wl_display_flush(data_device->video_data->display);
 
         close(pipefd[1]);
-        
+
         while (read_pipe(pipefd[0], &buffer, length, null_terminate) > 0);
         close(pipefd[0]);
     }
     return buffer;
 }
 
-int 
+int
 Wayland_data_offer_add_mime(SDL_WaylandDataOffer *offer,
                             const char* mime_type)
 {
@@ -366,7 +366,7 @@ Wayland_data_offer_add_mime(SDL_WaylandDataOffer *offer,
 }
 
 
-SDL_bool 
+SDL_bool
 Wayland_data_offer_has_mime(SDL_WaylandDataOffer *offer,
                             const char *mime_type)
 {
@@ -419,7 +419,7 @@ Wayland_data_device_set_selection(SDL_WaylandDataDevice *data_device,
 
         wl_list_for_each(mime_data, &(source->mimes), link) {
             wl_data_source_offer(source->source,
-                                 mime_data->mime_type); 
+                                 mime_data->mime_type);
 
             /* TODO - Improve system for multiple mime types to same data */
             for (index = 0; index < MIME_LIST_SIZE; ++index) {
@@ -429,9 +429,9 @@ Wayland_data_device_set_selection(SDL_WaylandDataDevice *data_device,
                }
             }
             /* */
- 
+
             ++num_offers;
-        } 
+        }
 
         if (num_offers == 0) {
             Wayland_data_device_clear_selection(data_device);
@@ -441,7 +441,7 @@ Wayland_data_device_set_selection(SDL_WaylandDataDevice *data_device,
             if (data_device->selection_serial != 0) {
                 wl_data_device_set_selection(data_device->data_device,
                                              source->source,
-                                             data_device->selection_serial); 
+                                             data_device->selection_serial);
             }
             data_device->selection_source = source;
         }
@@ -463,13 +463,13 @@ Wayland_data_device_set_serial(SDL_WaylandDataDevice *data_device,
             && data_device->selection_source != NULL) {
             wl_data_device_set_selection(data_device->data_device,
                                          data_device->selection_source->source,
-                                         serial); 
+                                         serial);
         }
 
         data_device->selection_serial = serial;
     }
 
-    return status; 
+    return status;
 }
 
 #endif /* SDL_VIDEO_DRIVER_WAYLAND */

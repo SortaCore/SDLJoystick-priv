@@ -161,7 +161,7 @@ void
 WIN_ResetDeadKeys()
 {
     /*
-    if a deadkey has been typed, but not the next character (which the deadkey might modify), 
+    if a deadkey has been typed, but not the next character (which the deadkey might modify),
     this tries to undo the effect pressing the deadkey.
     see: http://archives.miloush.net/michkap/archive/2006/09/10/748775.html
     */
@@ -451,7 +451,7 @@ IME_GetReadingString(SDL_VideoData *videodata, HWND hwnd)
         return;
 
     videodata->ime_readingstring[0] = 0;
-    
+
     id = IME_GetId(videodata, 0);
     if (!id)
         return;

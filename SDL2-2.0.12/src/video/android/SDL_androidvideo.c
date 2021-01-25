@@ -199,7 +199,7 @@ Android_VideoInit(_THIS)
         return -1;
     }
     display = SDL_GetDisplay(display_index);
-    display->orientation = Android_JNI_GetDisplayOrientation();    
+    display->orientation = Android_JNI_GetDisplayOrientation();
 
     SDL_AddDisplayMode(&_this->displays[0], &mode);
 

@@ -467,7 +467,7 @@ D3D_UpdateTextureRep(IDirect3DDevice9 *device, D3D_TextureRep *texture, int x, i
     d3drect.right = x + w;
     d3drect.top = y;
     d3drect.bottom = y + h;
-    
+
     result = IDirect3DTexture9_LockRect(texture->staging, 0, &locked, &d3drect, 0);
     if (FAILED(result)) {
         return D3D_SetError("LockRect()", result);

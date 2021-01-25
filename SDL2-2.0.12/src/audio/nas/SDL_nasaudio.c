@@ -197,7 +197,7 @@ NAS_CaptureFromDevice(_THIS, void *buffer, int buflen)
     while (SDL_TRUE) {
         /* just keep the event queue moving and the server chattering. */
         NAS_AuHandleEvents(h->aud);
-    
+
         retval = (int) NAS_AuReadElement(h->aud, h->flow, 1, buflen, buffer, NULL);
         /*printf("read %d capture bytes\n", (int) retval);*/
         if (retval == 0) {

@@ -66,11 +66,11 @@ extern const char* Wayland_convert_mime_type(const char *mime_type);
 
 /* Wayland Data Source - (Sending) */
 extern SDL_WaylandDataSource* Wayland_data_source_create(_THIS);
-extern ssize_t Wayland_data_source_send(SDL_WaylandDataSource *source, 
+extern ssize_t Wayland_data_source_send(SDL_WaylandDataSource *source,
                                         const char *mime_type, int fd);
 extern int Wayland_data_source_add_data(SDL_WaylandDataSource *source,
-                                        const char *mime_type, 
-                                        const void *buffer, 
+                                        const char *mime_type,
+                                        const void *buffer,
                                         size_t length);
 extern SDL_bool Wayland_data_source_has_mime(SDL_WaylandDataSource *source,
                                              const char *mime_type);

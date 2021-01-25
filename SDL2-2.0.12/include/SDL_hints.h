@@ -154,7 +154,7 @@ extern "C" {
 #define SDL_HINT_RENDER_VSYNC               "SDL_RENDER_VSYNC"
 
 /**
- *  \brief  A variable controlling whether the screensaver is enabled. 
+ *  \brief  A variable controlling whether the screensaver is enabled.
  *
  *  This variable can be set to the following values:
  *    "0"       - Disable screensaver
@@ -234,13 +234,13 @@ extern "C" {
 
 /**
  * \brief A variable controlling whether the X11 _NET_WM_BYPASS_COMPOSITOR hint should be used.
- * 
+ *
  * This variable can be set to the following values:
  * "0" - Disable _NET_WM_BYPASS_COMPOSITOR
  * "1" - Enable _NET_WM_BYPASS_COMPOSITOR
- * 
+ *
  * By default SDL will use _NET_WM_BYPASS_COMPOSITOR
- * 
+ *
  */
 #define SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR"
 
@@ -256,7 +256,7 @@ extern "C" {
 #define SDL_HINT_VIDEO_X11_FORCE_EGL "SDL_VIDEO_X11_FORCE_EGL"
 
 /**
- *  \brief  A variable controlling whether the window frame and title bar are interactive when the cursor is hidden 
+ *  \brief  A variable controlling whether the window frame and title bar are interactive when the cursor is hidden
  *
  *  This variable can be set to the following values:
  *    "0"       - The window frame is not interactive when the cursor is hidden (no move, resize, etc)
@@ -267,13 +267,13 @@ extern "C" {
 #define SDL_HINT_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN    "SDL_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN"
 
 /**
- * \brief A variable to specify custom icon resource id from RC file on Windows platform 
+ * \brief A variable to specify custom icon resource id from RC file on Windows platform
  */
 #define SDL_HINT_WINDOWS_INTRESOURCE_ICON       "SDL_WINDOWS_INTRESOURCE_ICON"
 #define SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL "SDL_WINDOWS_INTRESOURCE_ICON_SMALL"
 
 /**
- *  \brief  A variable controlling whether the windows message loop is processed by SDL 
+ *  \brief  A variable controlling whether the windows message loop is processed by SDL
  *
  *  This variable can be set to the following values:
  *    "0"       - The window message loop is not run
@@ -534,7 +534,7 @@ extern "C" {
 
 /**
  *  \brief  If set, game controller face buttons report their values according to their labels instead of their positional layout.
- * 
+ *
  *  For example, on Nintendo Switch controllers, normally you'd get:
  *
  *      (Y)
@@ -761,9 +761,9 @@ extern "C" {
 
 /**
 *  \brief  A variable that is the address of another SDL_Window* (as a hex string formatted with "%p").
-*  
+*
 *  If this hint is set before SDL_CreateWindowFrom() and the SDL_Window* it is set to has
-*  SDL_WINDOW_OPENGL set (and running on WGL only, currently), then two things will occur on the newly 
+*  SDL_WINDOW_OPENGL set (and running on WGL only, currently), then two things will occur on the newly
 *  created SDL_Window:
 *
 *  1. Its pixel format will be set to the same pixel format as this SDL_Window.  This is
@@ -915,7 +915,7 @@ extern "C" {
  * By default this hint is not set and the APK expansion files are not searched.
  */
 #define SDL_HINT_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION "SDL_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION"
- 
+
 /**
  * \brief Android APK expansion patch file version. Should be a string number like "1", "2" etc.
  *
@@ -933,9 +933,9 @@ extern "C" {
  *
  * The variable can be set to the following values:
  *   "0"       - SDL_TEXTEDITING events are sent, and it is the application's
- *               responsibility to render the text from these events and 
+ *               responsibility to render the text from these events and
  *               differentiate it somehow from committed text. (default)
- *   "1"       - If supported by the IME then SDL_TEXTEDITING events are not sent, 
+ *   "1"       - If supported by the IME then SDL_TEXTEDITING events are not sent,
  *               and text that is being composed will be rendered in its own UI.
  */
 #define SDL_HINT_IME_INTERNAL_EDITING "SDL_IME_INTERNAL_EDITING"
@@ -944,13 +944,13 @@ extern "C" {
  * \brief A variable to control whether we trap the Android back button to handle it manually.
  *        This is necessary for the right mouse button to work on some Android devices, or
  *        to be able to trap the back button for use in your code reliably.  If set to true,
- *        the back button will show up as an SDL_KEYDOWN / SDL_KEYUP pair with a keycode of 
+ *        the back button will show up as an SDL_KEYDOWN / SDL_KEYUP pair with a keycode of
  *        SDL_SCANCODE_AC_BACK.
  *
  * The variable can be set to the following values:
  *   "0"       - Back button will be handled as usual for system. (default)
  *   "1"       - Back button will be trapped, allowing you to handle the key press
- *               manually.  (This will also let right mouse click work on systems 
+ *               manually.  (This will also let right mouse click work on systems
  *               where the right mouse button functions as back.)
  *
  * The value of this hint is used at runtime, so it can be changed at any time.
@@ -1061,7 +1061,7 @@ extern "C" {
 /**
  * \brief Tell the video driver that we only want a double buffer.
  *
- * By default, most lowlevel 2D APIs will use a triple buffer scheme that 
+ * By default, most lowlevel 2D APIs will use a triple buffer scheme that
  * wastes no CPU time on waiting for vsync after issuing a flip, but
  * introduces a frame of latency. On the other hand, using a double buffer
  * scheme instead is recommended for cases where low latency is an important

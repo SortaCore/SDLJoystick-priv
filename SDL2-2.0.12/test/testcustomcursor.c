@@ -65,7 +65,7 @@ static const char *arrow[] = {
   "                                ",
   "                                ",
   "0,0"
-};  
+};
 
 static SDL_Cursor*
 init_color_cursor(const char *file)
@@ -167,7 +167,7 @@ loop()
             }
         }
     }
-    
+
     for (i = 0; i < state->num_windows; ++i) {
         SDL_Renderer *renderer = state->renderers[i];
         SDL_RenderClear(renderer);

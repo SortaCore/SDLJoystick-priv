@@ -667,7 +667,7 @@ static Uint8 RemapButton(SDL_DriverSwitch_Context *ctx, Uint8 button)
     }
     return button;
 }
- 
+
 static SDL_bool
 HIDAPI_DriverSwitch_InitDevice(SDL_HIDAPI_Device *device)
 {

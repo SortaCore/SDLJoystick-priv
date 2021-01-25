@@ -400,7 +400,7 @@ CompileShaderProgram(GL_ShaderContext *ctx, int index, GL_ShaderData *data)
 "#define texture2D texture2DRect\n"
 "#define UVCoordScale 0.5\n";
     } else {
-        frag_defines = 
+        frag_defines =
 "#define UVCoordScale 1.0\n";
     }
 

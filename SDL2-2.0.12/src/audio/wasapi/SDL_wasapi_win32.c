@@ -170,9 +170,9 @@ SDLMMNotificationClient_OnDefaultDeviceChanged(IMMNotificationClient *ithis, EDa
 static HRESULT STDMETHODCALLTYPE
 SDLMMNotificationClient_OnDeviceAdded(IMMNotificationClient *ithis, LPCWSTR pwstrDeviceId)
 {
-    /* we ignore this; devices added here then progress to ACTIVE, if appropriate, in 
-       OnDeviceStateChange, making that a better place to deal with device adds. More 
-       importantly: the first time you plug in a USB audio device, this callback will 
+    /* we ignore this; devices added here then progress to ACTIVE, if appropriate, in
+       OnDeviceStateChange, making that a better place to deal with device adds. More
+       importantly: the first time you plug in a USB audio device, this callback will
        fire, but when you unplug it, it isn't removed (it's state changes to NOTPRESENT).
        Plugging it back in won't fire this callback again. */
     return S_OK;

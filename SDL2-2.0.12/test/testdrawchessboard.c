@@ -60,7 +60,7 @@ loop()
 {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-       
+
        /* Re-create when window has been resized */
        if ((e.type == SDL_WINDOWEVENT) && (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
 

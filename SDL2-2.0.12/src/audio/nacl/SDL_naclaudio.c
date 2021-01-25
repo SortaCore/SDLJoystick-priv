@@ -49,7 +49,7 @@ static void nacl_audio_callback(void* stream, uint32_t buffer_size, PP_TimeDelta
     const int len = (int) buffer_size;
     SDL_AudioDevice* _this = (SDL_AudioDevice*) data;
     SDL_AudioCallback callback = _this->callbackspec.callback;
-    
+
     SDL_LockMutex(private->mutex);  /* !!! FIXME: is this mutex necessary? */
 
     /* Only do something if audio is enabled */
@@ -92,7 +92,7 @@ static void NACLAUDIO_CloseDevice(SDL_AudioDevice *device) {
     const PPB_Core *core = PSInterfaceCore();
     const PPB_Audio *ppb_audio = PSInterfaceAudio();
     SDL_PrivateAudioData *hidden = (SDL_PrivateAudioData *) device->hidden;
-    
+
     ppb_audio->StopPlayback(hidden->audio);
     SDL_DestroyMutex(hidden->mutex);
     core->ReleaseResource(hidden->audio);
@@ -103,33 +103,33 @@ NACLAUDIO_OpenDevice(_THIS, void *handle, const char *devname, int iscapture) {
     PP_Instance instance = PSGetInstanceId();
     const PPB_Audio *ppb_audio = PSInterfaceAudio();
     const PPB_AudioConfig *ppb_audiocfg = PSInterfaceAudioConfig();
-    
+
     private = (SDL_PrivateAudioData *) SDL_calloc(1, (sizeof *private));
     if (private == NULL) {
         return SDL_OutOfMemory();
     }
-    
+
     private->mutex = SDL_CreateMutex();
     _this->spec.freq = 44100;
     _this->spec.format = AUDIO_S16LSB;
     _this->spec.channels = 2;
     _this->spec.samples = ppb_audiocfg->RecommendSampleFrameCount(
-        instance, 
-        PP_AUDIOSAMPLERATE_44100, 
+        instance,
+        PP_AUDIOSAMPLERATE_44100,
         SAMPLE_FRAME_COUNT);
-    
+
     /* Calculate the final parameters for this audio specification */
     SDL_CalculateAudioSpec(&_this->spec);
-    
+
     private->audio = ppb_audio->Create(
         instance,
         ppb_audiocfg->CreateStereo16Bit(instance, PP_AUDIOSAMPLERATE_44100, _this->spec.samples),
-        nacl_audio_callback, 
+        nacl_audio_callback,
         _this);
-    
+
     /* Start audio playback while we are still on the main thread. */
     ppb_audio->StartPlayback(private->audio);
-    
+
     return 0;
 }
 
@@ -139,7 +139,7 @@ NACLAUDIO_Init(SDL_AudioDriverImpl * impl)
     if (PSGetInstanceId() == 0) {
         return 0;
     }
-    
+
     /* Set the function pointers */
     impl->OpenDevice = NACLAUDIO_OpenDevice;
     impl->CloseDevice = NACLAUDIO_CloseDevice;
@@ -151,7 +151,7 @@ NACLAUDIO_Init(SDL_AudioDriverImpl * impl)
      *    impl->PlayDevice = NACLAUDIO_PlayDevice;
      *    impl->Deinitialize = NACLAUDIO_Deinitialize;
      */
-    
+
     return 1;
 }
 

@@ -1684,7 +1684,7 @@ SDLTest_CommonEvent(SDLTest_CommonState * state, SDL_Event * event, int *done)
                     const int delta = 100;
                     int x, y;
                     SDL_GetWindowPosition(window, &x, &y);
-                    
+
                     if (event->key.keysym.sym == SDLK_UP)    y -= delta;
                     if (event->key.keysym.sym == SDLK_DOWN)  y += delta;
                     if (event->key.keysym.sym == SDLK_LEFT)  x -= delta;

@@ -376,7 +376,7 @@ SDL_sin(double x)
 #endif
 }
 
-float 
+float
 SDL_sinf(float x)
 {
 #if defined(HAVE_SINF)
@@ -472,7 +472,7 @@ void * memcpy ( void * destination, const void * source, size_t num )
     const Uint8 *src = (const Uint8 *)source;
     Uint8 *dst = (Uint8 *)destination;
     size_t i;
-    
+
     /* All WIN64 architectures have SSE, right? */
     if (!((uintptr_t) src & 15) && !((uintptr_t) dst & 15)) {
         __m128 values[4];

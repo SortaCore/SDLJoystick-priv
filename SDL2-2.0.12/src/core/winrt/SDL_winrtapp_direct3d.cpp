@@ -334,7 +334,7 @@ void SDL_WinRTApp::SetWindow(CoreWindow^ window)
         window->Bounds.Height);
 #endif
 
-    window->SizeChanged += 
+    window->SizeChanged +=
         ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &SDL_WinRTApp::OnWindowSizeChanged);
 
     window->VisibilityChanged +=
@@ -343,7 +343,7 @@ void SDL_WinRTApp::SetWindow(CoreWindow^ window)
     window->Activated +=
         ref new TypedEventHandler<CoreWindow^, WindowActivatedEventArgs^>(this, &SDL_WinRTApp::OnWindowActivated);
 
-    window->Closed += 
+    window->Closed +=
         ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &SDL_WinRTApp::OnWindowClosed);
 
 #if WINAPI_FAMILY != WINAPI_FAMILY_PHONE_APP
@@ -449,7 +449,7 @@ bool SDL_WinRTApp::ShouldWaitForAppResumeEvents()
     if (m_windowVisible) {
         return false;
     }
-    
+
     /* Don't wait until the window-hide events finish processing.
      * Do note that if an app-suspend event is sent (as indicated
      * by SDL_APP_WILLENTERBACKGROUND and SDL_APP_DIDENTERBACKGROUND
@@ -617,7 +617,7 @@ void SDL_WinRTApp::OnWindowActivated(CoreWindow^ sender, WindowActivatedEventArg
             if (SDL_GetKeyboardFocus() != window) {
                 SDL_SetKeyboardFocus(window);
             }
-        
+
             /* Send a mouse-motion event as appropriate.
                This doesn't work when called from OnPointerEntered, at least
                not in WinRT CoreWindow apps (as OnPointerEntered doesn't
@@ -765,7 +765,7 @@ void SDL_WinRTApp::OnPointerReleased(CoreWindow^ sender, PointerEventArgs^ args)
 #if LOG_POINTER_EVENTS
     WINRT_LogPointerEvent("pointer released", args, WINRT_TransformCursorPosition(WINRT_GlobalSDLWindow, args->CurrentPoint->Position, TransformToSDLWindowSize));
 #endif
-    
+
     WINRT_ProcessPointerReleasedEvent(WINRT_GlobalSDLWindow, args->CurrentPoint);
 }
 

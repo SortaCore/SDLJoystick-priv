@@ -659,7 +659,7 @@ public:
 
 		env->CallVoidMethod( g_HIDDeviceManagerCallbackHandler, g_midHIDDeviceManagerClose, m_nId );
 		ExceptionCheck( env, "Close" );
-	
+
 		hid_mutex_guard dataLock( &m_dataLock );
 		m_vecData.clear();
 
@@ -1005,7 +1005,7 @@ HID_API_EXPORT hid_device * HID_API_CALL hid_open_path(const char *path, int bEx
 		hid_mutex_guard l( &g_DevicesMutex );
 		for ( hid_device_ref<CHIDDevice> pCurr = g_Devices; pCurr; pCurr = pCurr->next )
 		{
-			if ( strcmp( pCurr->GetDeviceInfo()->path, path ) == 0 ) 
+			if ( strcmp( pCurr->GetDeviceInfo()->path, path ) == 0 )
 			{
 				hid_device *pValue = pCurr->GetDevice();
 				if ( pValue )

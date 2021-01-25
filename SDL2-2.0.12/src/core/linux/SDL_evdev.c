@@ -23,7 +23,7 @@
 #ifdef SDL_INPUT_LINUXEV
 
 /* This is based on the linux joystick driver */
-/* References: https://www.kernel.org/doc/Documentation/input/input.txt 
+/* References: https://www.kernel.org/doc/Documentation/input/input.txt
  *             https://www.kernel.org/doc/Documentation/input/event-codes.txt
  *             /usr/include/linux/input.h
  *             The evtest application is also useful to debug the protocol
@@ -223,7 +223,7 @@ static void SDL_EVDEV_udev_callback(SDL_UDEV_deviceevent udev_event, int udev_cl
             return;
 
         SDL_EVDEV_device_added(dev_path, udev_class);
-        break;  
+        break;
     case SDL_UDEV_DEVICEREMOVED:
         SDL_EVDEV_device_removed(dev_path);
         break;
@@ -233,7 +233,7 @@ static void SDL_EVDEV_udev_callback(SDL_UDEV_deviceevent udev_event, int udev_cl
 }
 #endif /* SDL_USE_LIBUDEV */
 
-void 
+void
 SDL_EVDEV_Poll(void)
 {
     struct input_event events[32];
@@ -437,7 +437,7 @@ SDL_EVDEV_Poll(void)
                     break;
                 }
             }
-        }    
+        }
     }
 }
 
@@ -579,7 +579,7 @@ SDL_EVDEV_destroy_touchscreen(SDL_evdevlist_item* item) {
 }
 
 static void
-SDL_EVDEV_sync_device(SDL_evdevlist_item *item) 
+SDL_EVDEV_sync_device(SDL_evdevlist_item *item)
 {
 #ifdef EVIOCGMTSLOTS
     int i, ret;

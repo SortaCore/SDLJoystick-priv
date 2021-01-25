@@ -32,7 +32,7 @@ HCURSOR SDL_cursor = NULL;
 
 static int rawInputEnableCount = 0;
 
-static int 
+static int
 ToggleRawInput(SDL_bool enabled)
 {
     RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL }; /* Mouse: UsagePage = 1, Usage = 2 */

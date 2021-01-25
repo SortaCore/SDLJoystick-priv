@@ -52,7 +52,7 @@
      - vs_4_0_level_9_1: Vertex shader for Windows 8+, including Windows RT
      - ps_4_0_level_9_3: Pixel shader for Windows Phone 8
      - vs_4_0_level_9_3: Vertex shader for Windows Phone 8
-   
+
 
    Shader object code was converted to a list of DWORDs via the following
    *nix style command (available separately from Windows + MSVC):
@@ -1903,7 +1903,7 @@ static struct
 int D3D11_CreateVertexShader(ID3D11Device1 *d3dDevice, ID3D11VertexShader **vertexShader, ID3D11InputLayout **inputLayout)
 {
     /* Declare how the input layout for SDL's vertex shader will be setup: */
-    const D3D11_INPUT_ELEMENT_DESC vertexDesc[] = 
+    const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },

@@ -143,7 +143,7 @@ main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
         SDL_RenderClear(renderer);
     }
- 
+
     /* Main render loop */
     done = 0;
 #ifdef __EMSCRIPTEN__

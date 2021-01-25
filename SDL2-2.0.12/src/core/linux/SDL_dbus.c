@@ -34,7 +34,7 @@ LoadDBUSSyms(void)
 {
     #define SDL_DBUS_SYM2(x, y) \
         if (!(dbus.x = SDL_LoadFunction(dbus_handle, #y))) return -1
-        
+
     #define SDL_DBUS_SYM(x) \
         SDL_DBUS_SYM2(x, dbus_##x)
 
@@ -169,7 +169,7 @@ SDL_DBus_GetContext(void)
     if (!dbus_handle || !dbus.session_conn) {
         SDL_DBus_Init();
     }
-    
+
     return (dbus_handle && dbus.session_conn) ? &dbus : NULL;
 }
 

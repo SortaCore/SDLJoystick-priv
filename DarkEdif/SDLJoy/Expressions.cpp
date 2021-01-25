@@ -70,7 +70,7 @@ const TCHAR * Extension::GetButtonsHeldHex(int joy)
 {
 	if (!DeviceIDOK(joy) || !SDL_Data[joy].connected)
 		return Runtime.CopyString(_T(""));
-	
+
 	int buttons = 0;
 	for (int i = 0; i < NUM_DEVICES; i++)
 		if (SDL_Data[joy].held_buttons[i])

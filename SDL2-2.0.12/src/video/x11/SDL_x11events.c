@@ -982,7 +982,7 @@ X11_DispatchEvent(_THIS)
                                         &xevent.xconfigure.x, &xevent.xconfigure.y,
                                         &ChildReturn);
             }
-                
+
             if (xevent.xconfigure.x != data->last_xconfigure.x ||
                 xevent.xconfigure.y != data->last_xconfigure.y) {
                 SDL_SendWindowEvent(data->window, SDL_WINDOWEVENT_MOVED,

@@ -216,7 +216,7 @@ jackProcessCaptureCallback(jack_nframes_t nframes, void *arg)
         const int total_channels = this->spec.channels;
         const int total_frames = this->spec.samples;
         int channelsi;
-    
+
         for (channelsi = 0; channelsi < total_channels; channelsi++) {
             const float *src = (const float *) JACK_jack_port_get_buffer(ports[channelsi], nframes);
             if (src) {

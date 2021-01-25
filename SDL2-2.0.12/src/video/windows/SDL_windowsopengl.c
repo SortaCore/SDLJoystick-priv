@@ -669,7 +669,7 @@ WIN_GL_CreateContext(_THIS, SDL_Window * window)
     HGLRC context, share_context;
 
     if (_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES && WIN_GL_UseEGL(_this)) {
-#if SDL_VIDEO_OPENGL_EGL        
+#if SDL_VIDEO_OPENGL_EGL
         /* Switch to EGL based functions */
         WIN_GL_UnloadLibrary(_this);
         _this->GL_LoadLibrary = WIN_GLES_LoadLibrary;
@@ -681,11 +681,11 @@ WIN_GL_CreateContext(_THIS, SDL_Window * window)
         _this->GL_GetSwapInterval = WIN_GLES_GetSwapInterval;
         _this->GL_SwapWindow = WIN_GLES_SwapWindow;
         _this->GL_DeleteContext = WIN_GLES_DeleteContext;
-        
+
         if (WIN_GLES_LoadLibrary(_this, NULL) != 0) {
             return NULL;
         }
-        
+
         return WIN_GLES_CreateContext(_this, window);
 #else
         SDL_SetError("SDL not configured with EGL support");

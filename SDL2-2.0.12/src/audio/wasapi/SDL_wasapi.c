@@ -373,7 +373,7 @@ WASAPI_CaptureFromDevice(_THIS, void *buffer, int buflen)
             } else {
                 SDL_memcpy(buffer, ptr, cpy);
             }
-            
+
             if (leftover > 0) {
                 ptr += cpy;
                 if (silent) {

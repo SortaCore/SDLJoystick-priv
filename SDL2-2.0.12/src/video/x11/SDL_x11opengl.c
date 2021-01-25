@@ -229,14 +229,14 @@ X11_GL_LoadLibrary(_THIS, const char *path)
     }
 
     /* Initialize extensions */
-    /* See lengthy comment about the inc/dec in 
+    /* See lengthy comment about the inc/dec in
        ../windows/SDL_windowsopengl.c. */
     ++_this->gl_config.driver_loaded;
     X11_GL_InitExtensions(_this);
     --_this->gl_config.driver_loaded;
-    
-    /* If we need a GL ES context and there's no  
-     * GLX_EXT_create_context_es2_profile extension, switch over to X11_GLES functions  
+
+    /* If we need a GL ES context and there's no
+     * GLX_EXT_create_context_es2_profile extension, switch over to X11_GLES functions
      */
     if (((_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES) ||
          SDL_GetHintBoolean(SDL_HINT_VIDEO_X11_FORCE_EGL, SDL_FALSE)) &&
@@ -428,7 +428,7 @@ X11_GL_InitExtensions(_THIS)
     if (HasExtension("GLX_EXT_visual_info", extensions)) {
         _this->gl_data->HAS_GLX_EXT_visual_info = SDL_TRUE;
     }
-    
+
     /* Check for GLX_EXT_create_context_es2_profile */
     if (HasExtension("GLX_EXT_create_context_es2_profile", extensions)) {
         /* this wants to call glGetString(), so it needs a context. */
@@ -725,9 +725,9 @@ X11_GL_CreateContext(_THIS, SDL_Window * window)
             /* only set if glx extension is available */
             if( _this->gl_data->HAS_GLX_ARB_context_flush_control ) {
                 attribs[iattr++] = GLX_CONTEXT_RELEASE_BEHAVIOR_ARB;
-                attribs[iattr++] = 
-                    _this->gl_config.release_behavior ? 
-                    GLX_CONTEXT_RELEASE_BEHAVIOR_FLUSH_ARB : 
+                attribs[iattr++] =
+                    _this->gl_config.release_behavior ?
+                    GLX_CONTEXT_RELEASE_BEHAVIOR_FLUSH_ARB :
                     GLX_CONTEXT_RELEASE_BEHAVIOR_NONE_ARB;
             }
 
@@ -772,7 +772,7 @@ X11_GL_CreateContext(_THIS, SDL_Window * window)
                                           DefaultScreen(display), glxAttribs,
                                           &fbcount);
                     }
-            
+
                     if (framebuffer_config) {
                         context = _this->gl_data->glXCreateContextAttribsARB(display,
                                                         framebuffer_config[0],

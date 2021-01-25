@@ -101,7 +101,7 @@ namespace NAMESPACE {
 			needed.  This function should be called at the beginning of
 			execution however, if there is a chance of HIDAPI handles
 			being opened by different threads simultaneously.
-			
+
 			@ingroup API
 
 			@returns

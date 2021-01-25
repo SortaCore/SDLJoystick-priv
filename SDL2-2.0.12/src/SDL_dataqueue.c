@@ -159,7 +159,7 @@ AllocateDataQueuePacket(SDL_DataQueue *queue)
     packet->datalen = 0;
     packet->startpos = 0;
     packet->next = NULL;
-                
+
     SDL_assert((queue->head != NULL) == (queue->queued_bytes != 0));
     if (queue->tail == NULL) {
         queue->head = packet;

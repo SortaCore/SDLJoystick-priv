@@ -234,7 +234,7 @@ main(int argc, char *argv[])
 
     /* load up our font */
     loadFont();
-    
+
     /* Show onscreen keyboard */
 #ifdef TEST_INPUT_RECT
     textrect.x = 0;

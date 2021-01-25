@@ -198,7 +198,7 @@ GetHIDScaledCalibratedState(recDevice * pDevice, recElement * pElement, SInt32 m
             *pValue = ((*pValue - pElement->minReport) * deviceScale / readScale) + min;
             returnValue = SDL_TRUE;
         }
-    } 
+    }
     return returnValue;
 }
 
@@ -969,7 +969,7 @@ DARWIN_JoystickUpdate(SDL_Joystick * joystick)
 
     element = device->firstHat;
     i = 0;
-    
+
     while (element) {
         Uint8 pos = 0;
 
@@ -1018,7 +1018,7 @@ DARWIN_JoystickUpdate(SDL_Joystick * joystick)
 
             SDL_PrivateJoystickHat(joystick, i, pos);
         }
-        
+
         element = element->pNext;
         ++i;
     }

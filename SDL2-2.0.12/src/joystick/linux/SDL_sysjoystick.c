@@ -218,15 +218,15 @@ static void joystick_udev_callback(SDL_UDEV_deviceevent udev_type, int udev_clas
             }
             MaybeAddDevice(devpath);
             break;
-            
+
         case SDL_UDEV_DEVICEREMOVED:
             MaybeRemoveDevice(devpath);
             break;
-            
+
         default:
             break;
     }
-    
+
 }
 #endif /* SDL_USE_LIBUDEV */
 

@@ -34,7 +34,7 @@
  *    are preloaded to deal with data (if any) that hangs off the end of the
  *    last iteration of the inner loop, plus any trailing bytes that were not
  *    enough to make up one whole iteration of the inner loop
- * 
+ *
  * There are (in general) three distinct code paths, selected between
  * depending upon how long the pixel row is. If it is long enough that there
  * is at least one iteration of the inner loop (as described above) then
@@ -746,7 +746,7 @@
         ldr     STRIDE_M, [sp, #ARGS_STACK_OFFSET+12]
  .endif
  .endif
-        
+
 #ifdef DEBUG_PARAMS
         add     Y, Y, #1
         stmia   sp, {r0-r7,pc}
@@ -761,7 +761,7 @@
   .set ARGS_STACK_OFFSET, ARGS_STACK_OFFSET+4
   .set LOCALS_STACK_OFFSET, LOCALS_STACK_OFFSET+4
  .endif
-        
+
  .if !SINGLE_SCANLINE
         lsl     STRIDE_D, #dst_bpp_shift /* stride in bytes */
         sub     STRIDE_D, STRIDE_D, X, lsl #dst_bpp_shift
@@ -774,7 +774,7 @@
         sub     STRIDE_M, STRIDE_M, X, lsl #mask_bpp_shift
  .endif
  .endif
- 
+
         /* Are we not even wide enough to have one 16-byte aligned 16-byte block write? */
         cmp     X, #2*16*8/dst_w_bpp - 1
         blo     170f
@@ -804,7 +804,7 @@
   .if ((flags) & FLAG_NO_PRELOAD_DST) == 0
         preload_leading_step1  dst_r_bpp, WK3, DST
   .endif
-        
+
         ands    WK0, DST, #15
         beq     154f
         rsb     WK0, WK0, #16 /* number of leading bytes until destination aligned */
@@ -816,7 +816,7 @@
   .endif
 
         leading_15bytes  process_head, process_tail
-        
+
 154:    /* Destination now 16-byte aligned; we have at least one prefetch on each channel as well as at least one 16-byte output block */
   .if (src_bpp > 0) && (mask_bpp == 0) && ((flags) & FLAG_PROCESS_PRESERVES_SCRATCH)
         and     SCRATCH, SRC, #31
@@ -858,17 +858,17 @@
  .if ((flags) & FLAG_NO_PRELOAD_DST) == 0
         preload_line 0, dst_r_bpp, dst_bpp_shift, DST
  .endif
-        
+
         sub     X, X, #128/dst_w_bpp     /* simplifies inner loop termination */
         ands    WK0, DST, #15
         beq     164f
         rsb     WK0, WK0, #16 /* number of leading bytes until destination aligned */
-        
+
         leading_15bytes  process_head, process_tail
-        
+
 164:    /* Destination now 16-byte aligned; we have at least one 16-byte output block */
         switch_on_alignment  medium_case_inner_loop_and_trailing_pixels, process_head, process_tail,, 167f
-        
+
 167:    /* Check for another line */
         end_of_line 1, %((flags) & FLAG_SPILL_LINE_VARS_NON_WIDE), 161b
 
@@ -891,7 +891,7 @@
  .if ((flags) & FLAG_NO_PRELOAD_DST) == 0
         preload_line 1, dst_r_bpp, dst_bpp_shift, DST
  .endif
-        
+
  .if dst_w_bpp == 8
         tst     DST, #3
         beq     174f

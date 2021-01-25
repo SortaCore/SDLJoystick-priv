@@ -166,7 +166,7 @@ WINRT_ShowCursor(SDL_Cursor * cursor)
         //     - src/main/winrt/SDL2-WinRTResources.rc             -- declares the cursor resource, and its ID (of 5000)
         //
 
-        const unsigned int win32CursorResourceID = 5000;  
+        const unsigned int win32CursorResourceID = 5000;
         CoreCursor ^ blankCursor = ref new CoreCursor(CoreCursorType::Custom, win32CursorResourceID);
 
         // Set 'PointerCursor' to 'blankCursor' in a way that shouldn't throw

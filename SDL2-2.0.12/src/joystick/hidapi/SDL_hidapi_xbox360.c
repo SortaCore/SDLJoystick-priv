@@ -567,7 +567,7 @@ HIDAPI_DriverXbox360_HandleStatePacket(SDL_Joystick *joystick, hid_device *dev, 
     if (ctx->gamepad) {
         HRESULT hr;
         struct __x_ABI_CWindows_CGaming_CInput_CGamepadReading state;
-        
+
         hr = __x_ABI_CWindows_CGaming_CInput_CIGamepad_GetCurrentReading(ctx->gamepad, &state);
         if (SUCCEEDED(hr)) {
             SDL_PrivateJoystickButton(joystick, SDL_CONTROLLER_BUTTON_GUIDE, (state.Buttons & 0x40000000) ? SDL_PRESSED : SDL_RELEASED);

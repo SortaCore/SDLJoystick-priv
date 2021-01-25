@@ -24,7 +24,7 @@
 
 #include "../../SDL_internal.h"
 
-/* We can't include wayland-client.h here 
+/* We can't include wayland-client.h here
  * but we need some structs from it
  */
 struct wl_interface;

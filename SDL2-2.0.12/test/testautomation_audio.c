@@ -285,7 +285,7 @@ int audio_pauseUnpauseAudio()
             /* Start and stop audio multiple times */
             for (l=0; l<3; l++) {
                 SDLTest_Log("Pause/Unpause iteration: %d", l+1);
-            
+
                 /* Reset callback counters */
                 _audio_testCallbackCounter = 0;
                 _audio_testCallbackLength = 0;
@@ -296,13 +296,13 @@ int audio_pauseUnpauseAudio()
                     SDL_PauseAudio(pause_on);
                     SDLTest_AssertPass("Call to SDL_PauseAudio(%d), call %d", pause_on, k+1);
                 }
-            
+
                 /* Wait for callback */
                 totalDelay = 0;
                 do {
                     SDL_Delay(10);
                     totalDelay += 10;
-                } 
+                }
                 while (_audio_testCallbackCounter == 0 && totalDelay < 1000);
                 SDLTest_AssertCheck(_audio_testCallbackCounter > 0, "Verify callback counter; expected: >0 got: %d", _audio_testCallbackCounter);
                 SDLTest_AssertCheck(_audio_testCallbackLength > 0, "Verify callback length; expected: >0 got: %d", _audio_testCallbackLength);
@@ -313,7 +313,7 @@ int audio_pauseUnpauseAudio()
                     SDL_PauseAudio(pause_on);
                     SDLTest_AssertPass("Call to SDL_PauseAudio(%d), call %d", pause_on, k+1);
                 }
-            
+
                 /* Ensure callback is not called again */
                 originalCounter = _audio_testCallbackCounter;
                 SDL_Delay(totalDelay + 10);

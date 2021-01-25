@@ -183,9 +183,9 @@ static int GetYUVPlanes(int width, int height, Uint32 format, const void *yuv, i
 
 static SDL_bool yuv_rgb_sse(
     Uint32 src_format, Uint32 dst_format,
-    Uint32 width, Uint32 height, 
-    const Uint8 *y, const Uint8 *u, const Uint8 *v, Uint32 y_stride, Uint32 uv_stride, 
-    Uint8 *rgb, Uint32 rgb_stride, 
+    Uint32 width, Uint32 height,
+    const Uint8 *y, const Uint8 *u, const Uint8 *v, Uint32 y_stride, Uint32 uv_stride,
+    Uint8 *rgb, Uint32 rgb_stride,
     YCbCrType yuv_type)
 {
 #ifdef __SSE2__
@@ -292,9 +292,9 @@ static SDL_bool yuv_rgb_sse(
 
 static SDL_bool yuv_rgb_std(
     Uint32 src_format, Uint32 dst_format,
-    Uint32 width, Uint32 height, 
-    const Uint8 *y, const Uint8 *u, const Uint8 *v, Uint32 y_stride, Uint32 uv_stride, 
-    Uint8 *rgb, Uint32 rgb_stride, 
+    Uint32 width, Uint32 height,
+    const Uint8 *y, const Uint8 *u, const Uint8 *v, Uint32 y_stride, Uint32 uv_stride,
+    Uint8 *rgb, Uint32 rgb_stride,
     YCbCrType yuv_type)
 {
     if (src_format == SDL_PIXELFORMAT_YV12 ||
@@ -465,7 +465,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
     const int width_half       = width / 2;
     const int width_remainder  = (width & 0x1);
     int i, j;
- 
+
     static struct RGB2YUVFactors RGB2YUVFactorTables[SDL_YUV_CONVERSION_BT709 + 1] =
     {
         /* ITU-T T.871 (JPEG) */
@@ -540,7 +540,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
 
 #define READ_ONE_RGB_PIXEL  READ_1x1_PIXEL
 
-    switch (dst_format) 
+    switch (dst_format)
     {
     case SDL_PIXELFORMAT_YV12:
     case SDL_PIXELFORMAT_IYUV:
@@ -548,7 +548,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
     case SDL_PIXELFORMAT_NV21:
         {
             const Uint8 *curr_row, *next_row;
-            
+
             Uint8 *plane_y;
             Uint8 *plane_u;
             Uint8 *plane_v;
@@ -645,7 +645,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
                         *plane_interleaved_uv++ = MAKE_V(r, g, b);
                     }
                 }
-            } 
+            }
             else /* dst_format == SDL_PIXELFORMAT_NV21 */
             {
                 uv_skip = (uv_stride - ((width + 1)/2)*2);
@@ -695,7 +695,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
             plane_skip = (dst_pitch - row_size);
 
             /* Write YUV plane, packed */
-            if (dst_format == SDL_PIXELFORMAT_YUY2) 
+            if (dst_format == SDL_PIXELFORMAT_YUY2)
             {
                 for (j = 0; j < height; j++) {
                     for (i = 0; i < width_half; i++) {
@@ -717,7 +717,7 @@ SDL_ConvertPixels_ARGB8888_to_YUV(int width, int height, const void *src, int sr
                     plane += plane_skip;
                     curr_row += src_pitch;
                 }
-            } 
+            }
             else if (dst_format == SDL_PIXELFORMAT_UYVY)
             {
                 for (j = 0; j < height; j++) {

@@ -849,8 +849,8 @@ HIDAPI_IsDevicePresent(Uint16 vendor_id, Uint16 product_id, Uint16 version, cons
     }
 
     /* Only update the device list for devices we know might be supported.
-       If we did this for every device, it would hit the USB driver too hard and potentially 
-       lock up the system. This won't catch devices that we support but can only detect using 
+       If we did this for every device, it would hit the USB driver too hard and potentially
+       lock up the system. This won't catch devices that we support but can only detect using
        USB interface details, like Xbox controllers, but hopefully the device list update is
        responsive enough to catch those.
      */

@@ -278,7 +278,7 @@ WINRT_TranslateKeycode(int keycode, unsigned int nativeScancode)
                         return windows_scancode_table[nativeScancode];
                 }
                 break;
-            
+
             // Add others, as necessary.
             //
             // Unfortunately, this hack doesn't seem to work in determining

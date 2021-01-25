@@ -154,7 +154,7 @@ SDL_ANDROID_SensorOpen(SDL_Sensor *sensor, int device_index)
     sensor->hwdata = hwdata;
     return 0;
 }
-    
+
 static void
 SDL_ANDROID_SensorUpdate(SDL_Sensor *sensor)
 {

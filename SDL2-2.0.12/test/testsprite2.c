@@ -220,7 +220,7 @@ MoveSprites(SDL_Renderer * renderer, SDL_Texture * sprite)
             }
 
         }
-        
+
         /* Countdown sprite-move iterations and disable color changes at iteration end - used for visual tests. */
         if (iterations > 0) {
             iterations--;
@@ -374,7 +374,7 @@ main(int argc, char *argv[])
         quit(2);
     }
 
-    /* Position sprites and set their velocities using the fuzzer */ 
+    /* Position sprites and set their velocities using the fuzzer */
     if (iterations >= 0) {
         /* Deterministic seed - used for visual tests */
         seed = (Uint64)iterations;

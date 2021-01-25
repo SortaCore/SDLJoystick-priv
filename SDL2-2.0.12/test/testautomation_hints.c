@@ -78,7 +78,7 @@ hints_getHint(void *arg)
   char *result1;
   char *result2;
   int i;
-    
+
   for (i=0; i<_numHintsEnum; i++) {
     result1 = (char *)SDL_GetHint((char*)_HintsEnum[i]);
     SDLTest_AssertPass("Call to SDL_GetHint(%s) - using define definition", (char*)_HintsEnum[i]);
@@ -90,7 +90,7 @@ hints_getHint(void *arg)
       (result1 == NULL) ? "null" : result1,
       (result2 == NULL) ? "null" : result2);
   }
-  
+
   return TEST_COMPLETED;
 }
 
@@ -106,20 +106,20 @@ hints_setHint(void *arg)
   SDL_bool result;
   int i, j;
 
-  /* Create random values to set */                    
+  /* Create random values to set */
   value = SDLTest_RandomAsciiStringOfSize(10);
-    
+
   for (i=0; i<_numHintsEnum; i++) {
     /* Capture current value */
     originalValue = (char *)SDL_GetHint((char*)_HintsEnum[i]);
     SDLTest_AssertPass("Call to SDL_GetHint(%s)", (char*)_HintsEnum[i]);
-    
+
     /* Set value (twice) */
     for (j=1; j<=2; j++) {
       result = SDL_SetHint((char*)_HintsEnum[i], value);
       SDLTest_AssertPass("Call to SDL_SetHint(%s, %s) (iteration %i)", (char*)_HintsEnum[i], value, j);
       SDLTest_AssertCheck(
-        result == SDL_TRUE || result == SDL_FALSE, 
+        result == SDL_TRUE || result == SDL_FALSE,
         "Verify valid result was returned, got: %i",
         (int)result);
       testValue = (char *)SDL_GetHint((char*)_HintsEnum[i]);
@@ -130,18 +130,18 @@ hints_setHint(void *arg)
         (testValue == NULL) ? "null" : testValue,
         value);
     }
-      
+
     /* Reset original value */
     result = SDL_SetHint((char*)_HintsEnum[i], originalValue);
     SDLTest_AssertPass("Call to SDL_SetHint(%s, originalValue)", (char*)_HintsEnum[i]);
     SDLTest_AssertCheck(
-      result == SDL_TRUE || result == SDL_FALSE, 
+      result == SDL_TRUE || result == SDL_FALSE,
       "Verify valid result was returned, got: %i",
       (int)result);
   }
-  
+
   SDL_free(value);
-  
+
   return TEST_COMPLETED;
 }
 

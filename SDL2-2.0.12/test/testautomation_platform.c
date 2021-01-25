@@ -437,7 +437,7 @@ int platform_testSetErrorInvalidInput(void *arg)
              probeError,
              lastError);
    }
-   
+
    /* Clean up */
    SDL_ClearError();
    SDLTest_AssertPass("SDL_ClearError()");

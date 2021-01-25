@@ -30,7 +30,7 @@ main(int argc, char *argv[])
     int i;
     SDL_bool enable_haptic = SDL_TRUE;
     Uint32 init_subsystems = SDL_INIT_VIDEO | SDL_INIT_JOYSTICK;
-    
+
     for (i = 1; i < argc; ++i) {
         if (SDL_strcasecmp(argv[i], "--nohaptic") == 0) {
             enable_haptic = SDL_FALSE;
@@ -40,7 +40,7 @@ main(int argc, char *argv[])
     if(enable_haptic) {
         init_subsystems |= SDL_INIT_HAPTIC;
     }
-    
+
     /* Enable standard application logging */
     SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 

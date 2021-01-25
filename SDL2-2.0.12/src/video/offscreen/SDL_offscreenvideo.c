@@ -145,7 +145,7 @@ OFFSCREEN_VideoInit(_THIS)
     mouse = SDL_GetMouse();
     /* This function needs to be implemented by every driver */
     mouse->GetGlobalMouseState = OFFSCREEN_GetGlobalMouseState;
-    
+
     /* We're done! */
     return 0;
 }

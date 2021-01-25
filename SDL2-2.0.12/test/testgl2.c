@@ -280,7 +280,7 @@ main(int argc, char *argv[])
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_GL_CreateContext(): %s\n", SDL_GetError());
         quit(2);
     }
-    
+
     /* Important: call this *after* creating the context */
     if (LoadContext(&ctx) < 0) {
         SDL_Log("Could not load GL functions\n");
@@ -376,7 +376,7 @@ main(int argc, char *argv[])
     ctx.glEnable(GL_DEPTH_TEST);
     ctx.glDepthFunc(GL_LESS);
     ctx.glShadeModel(GL_SMOOTH);
-    
+
     /* Main render loop */
     frames = 0;
     then = SDL_GetTicks();

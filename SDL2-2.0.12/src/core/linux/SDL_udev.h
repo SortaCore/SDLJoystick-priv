@@ -101,7 +101,7 @@ typedef struct SDL_UDEV_PrivateData
     struct udev_monitor *udev_mon;
     int ref_count;
     SDL_UDEV_CallbackList *first, *last;
-    
+
     /* Function pointers */
     SDL_UDEV_Symbols syms;
 } SDL_UDEV_PrivateData;

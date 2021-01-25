@@ -181,7 +181,7 @@ int  HID_API_EXPORT HID_API_CALL hid_write(hid_device *device, const unsigned ch
 		return HIDUSB::hid_write( (HIDUSB::hid_device*)device, data, length );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int HID_API_EXPORT HID_API_CALL hid_read_timeout(hid_device *device, unsigned char *data, size_t length, int milliseconds)
@@ -194,7 +194,7 @@ int HID_API_EXPORT HID_API_CALL hid_read_timeout(hid_device *device, unsigned ch
 		return HIDUSB::hid_read_timeout( (HIDUSB::hid_device*)device, data, length, milliseconds );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int  HID_API_EXPORT HID_API_CALL hid_read(hid_device *device, unsigned char *data, size_t length)
@@ -207,7 +207,7 @@ int  HID_API_EXPORT HID_API_CALL hid_read(hid_device *device, unsigned char *dat
 		return HIDUSB::hid_read( (HIDUSB::hid_device*)device, data, length );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int  HID_API_EXPORT HID_API_CALL hid_set_nonblocking(hid_device *device, int nonblock)
@@ -220,7 +220,7 @@ int  HID_API_EXPORT HID_API_CALL hid_set_nonblocking(hid_device *device, int non
 		return HIDUSB::hid_set_nonblocking( (HIDUSB::hid_device*)device, nonblock );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int HID_API_EXPORT HID_API_CALL hid_send_feature_report(hid_device *device, const unsigned char *data, size_t length)
@@ -233,7 +233,7 @@ int HID_API_EXPORT HID_API_CALL hid_send_feature_report(hid_device *device, cons
 		return HIDUSB::hid_send_feature_report( (HIDUSB::hid_device*)device, data, length );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int HID_API_EXPORT HID_API_CALL hid_get_feature_report(hid_device *device, unsigned char *data, size_t length)
@@ -246,7 +246,7 @@ int HID_API_EXPORT HID_API_CALL hid_get_feature_report(hid_device *device, unsig
 		return HIDUSB::hid_get_feature_report( (HIDUSB::hid_device*)device, data, length );
 	default:
 		return -1;
-	} 
+	}
 }
 
 void HID_API_EXPORT HID_API_CALL hid_close(hid_device *device)
@@ -261,7 +261,7 @@ void HID_API_EXPORT HID_API_CALL hid_close(hid_device *device)
 		break;
 	default:
 		break;
-	} 
+	}
 	s_hashDeviceToAPI.Remove( (uintptr_t)device );
 }
 
@@ -275,7 +275,7 @@ int HID_API_EXPORT_CALL hid_get_manufacturer_string(hid_device *device, wchar_t 
 		return HIDUSB::hid_get_manufacturer_string( (HIDUSB::hid_device*)device, string, maxlen );
 	default:
 		return -1;
-	} 
+	}
 }
 
 int HID_API_EXPORT_CALL hid_get_product_string(hid_device *device, wchar_t *string, size_t maxlen)
@@ -327,7 +327,7 @@ HID_API_EXPORT const wchar_t* HID_API_CALL hid_error(hid_device *device)
 		return HIDUSB::hid_error( (HIDUSB::hid_device*)device );
 	default:
 		return NULL;
-	} 
+	}
 }
 
 }

@@ -142,15 +142,15 @@ stdlib_getsetenv(void *arg)
       name[counter] = (char)SDLTest_RandomIntegerInRange(65, 90);
     }
     name[nameLen] = '\0';
-    
+
     text = SDL_getenv(name);
     SDLTest_AssertPass("Call to SDL_getenv('%s')", name);
     if (text != NULL) {
       SDLTest_Log("Expected: NULL, Got: '%s' (%i)", text, (int) SDL_strlen(text));
     }
   } while (text != NULL);
-   
-  /* Create random values to set */                    
+
+  /* Create random values to set */
   value1 = SDLTest_RandomAsciiStringOfSize(10);
   value2 = SDLTest_RandomAsciiStringOfSize(10);
 
@@ -167,15 +167,15 @@ stdlib_getsetenv(void *arg)
   SDLTest_AssertCheck(text != NULL, "Verify returned text is not NULL");
   if (text != NULL) {
     SDLTest_AssertCheck(
-      SDL_strcmp(text, expected) == 0, 
+      SDL_strcmp(text, expected) == 0,
       "Verify returned text, expected: %s, got: %s",
       expected,
       text);
   }
-  
+
   /* Set value 2 with overwrite */
   overwrite = 1;
-  expected = value2;    
+  expected = value2;
   result = SDL_setenv(name, value2, overwrite);
   SDLTest_AssertPass("Call to SDL_setenv('%s','%s', %i)", name, value2, overwrite);
   SDLTest_AssertCheck(result == 0, "Check result, expected: 0, got: %i", result);
@@ -186,7 +186,7 @@ stdlib_getsetenv(void *arg)
   SDLTest_AssertCheck(text != NULL, "Verify returned text is not NULL");
   if (text != NULL) {
     SDLTest_AssertCheck(
-      SDL_strcmp(text, expected) == 0, 
+      SDL_strcmp(text, expected) == 0,
       "Verify returned text, expected: %s, got: %s",
       expected,
       text);
@@ -194,7 +194,7 @@ stdlib_getsetenv(void *arg)
 
   /* Set value 1 without overwrite */
   overwrite = 0;
-  expected = value2;    
+  expected = value2;
   result = SDL_setenv(name, value1, overwrite);
   SDLTest_AssertPass("Call to SDL_setenv('%s','%s', %i)", name, value1, overwrite);
   SDLTest_AssertCheck(result == 0, "Check result, expected: 0, got: %i", result);
@@ -205,12 +205,12 @@ stdlib_getsetenv(void *arg)
   SDLTest_AssertCheck(text != NULL, "Verify returned text is not NULL");
   if (text != NULL) {
     SDLTest_AssertCheck(
-      SDL_strcmp(text, expected) == 0, 
+      SDL_strcmp(text, expected) == 0,
       "Verify returned text, expected: %s, got: %s",
       expected,
       text);
   }
-  
+
   /* Set value 1 without overwrite */
   overwrite = 1;
   expected = value1;
@@ -224,14 +224,14 @@ stdlib_getsetenv(void *arg)
   SDLTest_AssertCheck(text != NULL, "Verify returned text is not NULL");
   if (text != NULL) {
     SDLTest_AssertCheck(
-      SDL_strcmp(text, expected) == 0, 
+      SDL_strcmp(text, expected) == 0,
       "Verify returned text, expected: %s, got: %s",
       expected,
       text);
   }
 
   /* Negative cases */
-  for (overwrite=0; overwrite <= 1; overwrite++) { 
+  for (overwrite=0; overwrite <= 1; overwrite++) {
     result = SDL_setenv(NULL, value1, overwrite);
     SDLTest_AssertPass("Call to SDL_setenv(NULL,'%s', %i)", value1, overwrite);
     SDLTest_AssertCheck(result == -1, "Check result, expected: -1, got: %i", result);
@@ -249,7 +249,7 @@ stdlib_getsetenv(void *arg)
   /* Clean up */
   SDL_free(value1);
   SDL_free(value2);
-    
+
   return TEST_COMPLETED;
 }
 

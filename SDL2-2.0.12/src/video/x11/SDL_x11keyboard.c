@@ -218,11 +218,11 @@ X11_KeyCodeToSym(_THIS, KeyCode keycode, unsigned char group)
     if (data->xkb) {
         int num_groups     = XkbKeyNumGroups(data->xkb, keycode);
         unsigned char info = XkbKeyGroupInfo(data->xkb, keycode);
-        
+
         if (num_groups && group >= num_groups) {
-        
+
             int action = XkbOutOfRangeGroupAction(info);
-            
+
             if (action == XkbRedirectIntoRange) {
                 if ((group = XkbOutOfRangeGroupNumber(info)) >= num_groups) {
                     group = 0;
@@ -268,7 +268,7 @@ X11_InitKeyboard(_THIS)
     int distance;
     Bool xkb_repeat = 0;
     XKeyboardState values = { .global_auto_repeat = AutoRepeatModeOff };
-    
+
     X11_XGetKeyboardControl(data->display, &values);
     if (values.global_auto_repeat != AutoRepeatModeOn)
         X11_XAutoRepeatOn(data->display);
@@ -286,11 +286,11 @@ X11_InitKeyboard(_THIS)
         X11_XkbSetDetectableAutoRepeat(data->display, True, &xkb_repeat);
     }
 #endif
-    
+
     /* Open a connection to the X input manager */
 #ifdef X_HAVE_UTF8_STRING
     if (SDL_X11_HAVE_UTF8) {
-        /* Set the locale, and call XSetLocaleModifiers before XOpenIM so that 
+        /* Set the locale, and call XSetLocaleModifiers before XOpenIM so that
            Compose keys will work correctly. */
         char *prev_locale = setlocale(LC_ALL, NULL);
         char *prev_xmods  = X11_XSetLocaleModifiers(NULL);
@@ -308,7 +308,7 @@ X11_InitKeyboard(_THIS)
 
         /* IBus resends some key events that were filtered by XFilterEvents
            when it is used via XIM which causes issues. Prevent this by forcing
-           @im=none if XMODIFIERS contains @im=ibus. IBus can still be used via 
+           @im=none if XMODIFIERS contains @im=ibus. IBus can still be used via
            the DBus implementation, which also has support for pre-editing. */
         if (env_xmods && SDL_strstr(env_xmods, "@im=ibus") != NULL) {
             has_dbus_ime_support = SDL_TRUE;
@@ -535,7 +535,7 @@ X11_SetTextInputRect(_THIS, SDL_Rect *rect)
         SDL_InvalidParamError("rect");
         return;
     }
-       
+
 #ifdef SDL_USE_IME
     SDL_IME_UpdateTextRect(rect);
 #endif

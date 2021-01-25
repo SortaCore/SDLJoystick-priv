@@ -213,7 +213,7 @@ typedef struct {
     unsigned long long expected_result;
 } LL_Test;
 
-static LL_Test LL_Tests[] = 
+static LL_Test LL_Tests[] =
 {
     /* UNDEFINED {"_allshl",   &TST_allshl,   0xFFFFFFFFFFFFFFFFll,                  0ll, 65, 0x0000000000000000ll}, */
     {"_allshl",   &TST_allshl,   0xFFFFFFFFFFFFFFFFll,                  0ll,  1, 0xFFFFFFFFFFFFFFFEll},

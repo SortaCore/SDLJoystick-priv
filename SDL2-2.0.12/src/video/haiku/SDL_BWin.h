@@ -356,7 +356,7 @@ class SDL_BWin:public BDirectWindow
                 }
             }
             break;
-            
+
         case B_UNMAPPED_KEY_DOWN:      /* modifier keys are unmapped */
             if (msg->FindInt32("key", &key) == B_OK) {
                 _KeyEvent((SDL_Scancode)key, NULL, 0, SDL_PRESSED);

@@ -33,7 +33,7 @@
 #define HAVE_FAST_WRITE_INT8 1
 
 /* On some CPU, it's slower than combining and write a word */
-#if defined(__MIPS__) 
+#if defined(__MIPS__)
 #  undef  HAVE_FAST_WRITE_INT8
 #  define HAVE_FAST_WRITE_INT8 0
 #endif
@@ -182,7 +182,7 @@ static vector unsigned char reorder_ppc64le_vec(vector unsigned char vpermute)
     /* The result vector of calc_swizzle32 reorder bytes using vec_perm.
        The LE transformation for vec_perm has an implicit assumption
        that the permutation is being used to reorder vector elements,
-       not to reorder bytes within those elements.  
+       not to reorder bytes within those elements.
        Unfortunatly the result order is not the expected one for powerpc
        little endian when the two first vector parameters of vec_perm are
        not of type 'vector char'. This is because the numbering from the

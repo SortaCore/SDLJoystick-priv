@@ -182,13 +182,13 @@ KMSDRM_CreateCursor(SDL_Surface * surface, int hot_x, int hot_y)
 
     /* We have to know beforehand if a cursor with the same size as the surface is supported.
      * If it's not, we have to find an usable cursor size and use an intermediate and clean buffer.
-     * If we can't find a cursor size supported by the hardware, we won't go on trying to 
+     * If we can't find a cursor size supported by the hardware, we won't go on trying to
      * call SDL_SetCursor() later. */
 
     usable_cursor_w = surface->w;
     usable_cursor_h = surface->h;
 
-    while (usable_cursor_w <= MAX_CURSOR_W && usable_cursor_h <= MAX_CURSOR_H) { 
+    while (usable_cursor_w <= MAX_CURSOR_W && usable_cursor_h <= MAX_CURSOR_H) {
         if (KMSDRM_IsCursorSizeSupported(usable_cursor_w, usable_cursor_h, bo_format)) {
             cursor_supported = SDL_TRUE;
             break;

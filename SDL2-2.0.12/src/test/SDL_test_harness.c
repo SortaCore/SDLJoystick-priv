@@ -316,7 +316,7 @@ SDLTest_RunTest(SDLTest_TestSuiteReference *testSuite, const SDLTest_TestCaseRef
 }
 
 /* Prints summary of all suites/tests contained in the given reference */
-#if 0 
+#if 0
 static void SDLTest_LogTestSuiteSummary(SDLTest_TestSuiteReference *testSuites)
 {
     int suiteCounter;
@@ -446,9 +446,9 @@ int SDLTest_RunSuites(SDLTest_TestSuiteReference *testSuites[], const char *user
 
 	/* Pre-allocate an array for tracking failed tests (potentially all test cases) */
 	failedTests = (const SDLTest_TestCaseReference **)SDL_malloc(totalNumberOfTests * sizeof(SDLTest_TestCaseReference *));
-	if (failedTests == NULL) {	
+	if (failedTests == NULL) {
 	   SDLTest_LogError("Unable to allocate cache for failed tests");
-           SDL_Error(SDL_ENOMEM);	   
+           SDL_Error(SDL_ENOMEM);
            return -1;
 	}
 

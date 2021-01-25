@@ -30,19 +30,19 @@ Wayland_SetClipboardText(_THIS, const char *text)
 {
     SDL_VideoData *video_data = NULL;
     SDL_WaylandDataDevice *data_device = NULL;
-    
+
     int status = 0;
- 
+
     if (_this == NULL || _this->driverdata == NULL) {
         status = SDL_SetError("Video driver uninitialized");
     } else {
         video_data = _this->driverdata;
-        /* TODO: Support more than one seat */ 
+        /* TODO: Support more than one seat */
         data_device = Wayland_get_data_device(video_data->input);
         if (text[0] != '\0') {
             SDL_WaylandDataSource* source = Wayland_data_source_create(_this);
             Wayland_data_source_add_data(source, TEXT_MIME, text,
-                                         strlen(text) + 1); 
+                                         strlen(text) + 1);
 
             status = Wayland_data_device_set_selection(data_device, source);
             if (status != 0) {
@@ -66,25 +66,25 @@ Wayland_GetClipboardText(_THIS)
 
     void *buffer = NULL;
     size_t length = 0;
- 
+
     if (_this == NULL || _this->driverdata == NULL) {
         SDL_SetError("Video driver uninitialized");
     } else {
         video_data = _this->driverdata;
-        /* TODO: Support more than one seat */ 
+        /* TODO: Support more than one seat */
         data_device = Wayland_get_data_device(video_data->input);
         if (data_device->selection_offer != NULL) {
             buffer = Wayland_data_offer_receive(data_device->selection_offer,
                                                 &length, TEXT_MIME, SDL_TRUE);
             if (length > 0) {
                 text = (char*) buffer;
-            } 
+            }
         } else if (data_device->selection_source != NULL) {
             buffer = Wayland_data_source_get_data(data_device->selection_source,
                                                   &length, TEXT_MIME, SDL_TRUE);
             if (length > 0) {
                 text = (char*) buffer;
-            } 
+            }
         }
     }
 
@@ -101,7 +101,7 @@ Wayland_HasClipboardText(_THIS)
     SDL_VideoData *video_data = NULL;
     SDL_WaylandDataDevice *data_device = NULL;
 
-    SDL_bool result = SDL_FALSE;    
+    SDL_bool result = SDL_FALSE;
     if (_this == NULL || _this->driverdata == NULL) {
         SDL_SetError("Video driver uninitialized");
     } else {
