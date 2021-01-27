@@ -1,4 +1,5 @@
 #include "Common.h"
+#include <atomic>
 
 extern HINSTANCE hInstLib;
 extern Edif::SDK * SDK;
@@ -396,7 +397,7 @@ Prop * GetProperty(EDITDATA * edPtr, size_t ID)
 	const json_value &jsonItem = CurLang["Properties"][ID];
 	const char * curStr = jsonItem["Type"];
 	Prop * ret = nullptr;
-	bool allConv;
+	bool allConv = false;
 	if (!_stricmp(curStr, "Text") || !_stricmp(curStr, "Edit button"))
 	{
 		ret = new Prop_Str(UTF8ToTString((const char *)jsonItem["DefaultState"], &allConv).c_str());
@@ -604,42 +605,33 @@ std::uint16_t DarkEdif::GetEventNumber(eventGroup * evg) {
 // ANSI is not UTF-8, the earliest OS version that *can* use UTF-8 for OS function calls is
 // Windows 10 Insider Preview Build 17035, and even that is non-default and in beta.
 
-std::tstring ANSIToTString(const std::string input) {
+std::tstring ANSIToTString(const std::string_view input) {
 	return WideToTString(ANSIToWide(input));
 }
-std::string ANSIToUTF8(const std::string input) {
+std::string ANSIToUTF8(const std::string_view input) {
 	return WideToUTF8(ANSIToWide(input));
 }
-std::wstring ANSIToWide(const std::string input) {
+std::wstring ANSIToWide(const std::string_view input) {
 	if (input.empty())
 		return std::wstring();
 
 	// First call WideCharToMultiByte() to get output size to reserve
-	size_t length = MultiByteToWideChar(CP_ACP, 0, input.c_str(), input.size(), NULL, 0);
+	size_t length = MultiByteToWideChar(CP_ACP, 0, input.data(), input.size(), NULL, 0);
 	assert(length > 0 && "Failed to convert between string encodings, input string is broken.");
-#if _HAS_CXX17
 	std::wstring outputStr(length, L'\0');
 
 	// Actually convert
-	length = MultiByteToWideChar(CP_ACP, 0, input.c_str(), input.size(), outputStr.data(), outputStr.size());
+	length = MultiByteToWideChar(CP_ACP, 0, input.data(), input.size(), outputStr.data(), outputStr.size());
 	assert(length > 0 && "Failed to convert between string encodings.");
-#else
-	wchar_t * outputBuf = (wchar_t *)_malloca((length + 1) * sizeof(wchar_t));
-	// Actually convert
-	length = MultiByteToWideChar(CP_ACP, 0, input.c_str(), input.size(), outputBuf, length + 1);
-	assert(length > 0 && "Failed to convert between string encodings.");
-	std::wstring outputStr(outputBuf, length);
-	_freea(outputBuf);
-#endif
 	assert(input.back() != '\0' && "Input ends with null.");
 	assert(outputStr.back() != L'\0' && "Output ends with null.");
 
 	return outputStr;
 }
-std::string UTF8ToANSI(const std::string input, bool * const allValidChars /* = nullptr */) {
+std::string UTF8ToANSI(const std::string_view input, bool * const allValidChars /* = nullptr */) {
 	return WideToANSI(UTF8ToWide(input), allValidChars);
 }
-std::tstring UTF8ToTString(const std::string input, bool * const allValidChars /* = nullptr */) {
+std::tstring UTF8ToTString(const std::string_view input, bool * const allValidChars /* = nullptr */) {
 #ifdef _UNICODE
 	if (allValidChars)
 		*allValidChars = true; // UTF-8 and UTF-16 share all chars
@@ -648,33 +640,24 @@ std::tstring UTF8ToTString(const std::string input, bool * const allValidChars /
 	return UTF8ToANSI(input, allValidChars);
 #endif
 }
-std::wstring UTF8ToWide(const std::string input)
+std::wstring UTF8ToWide(const std::string_view input)
 {
 	if (input.empty())
 		return std::wstring();
 
 	// First call WideCharToMultiByte() to get output size to reserve
-	size_t length = MultiByteToWideChar(CP_UTF8, 0, input.c_str(), input.size(), NULL, 0);
+	size_t length = MultiByteToWideChar(CP_UTF8, 0, input.data(), input.size(), NULL, 0);
 	assert(length > 0 && "Failed to convert between string encodings, input string is broken.");
-#if _HAS_CXX17
 	std::wstring outputStr(length, L'\0');
 
 	// Actually convert
-	length = MultiByteToWideChar(CP_UTF8, 0, input.c_str(), input.size(), outputStr.data(), outputStr.size());
+	length = MultiByteToWideChar(CP_UTF8, 0, input.data(), input.size(), outputStr.data(), outputStr.size());
 	assert(length > 0 && "Failed to convert between string encodings.");
-#else
-	wchar_t * outputBuf = (wchar_t*)_malloca((length + 1) * sizeof(wchar_t));
-	// Actually convert
-	length = MultiByteToWideChar(CP_UTF8, 0, input.c_str(), input.size(), outputBuf, length + 1);
-	assert(length > 0 && "Failed to convert between string encodings.");
-	std::wstring outputStr(outputBuf, length);
-	_freea(outputBuf);
-#endif
 	assert(input.back() != '\0' && "Input ends with null.");
 	assert(outputStr.back() != L'\0' && "Output ends with null.");
 	return outputStr;
 }
-std::string WideToANSI(const std::wstring input, bool * const allValidChars /* = nullptr */) {
+std::string WideToANSI(const std::wstring_view input, bool * const allValidChars /* = nullptr */) {
 	if (input.empty())
 	{
 		if (allValidChars)
@@ -682,87 +665,69 @@ std::string WideToANSI(const std::wstring input, bool * const allValidChars /* =
 		return std::string();
 	}
 
-	BOOL someFailed;
+	BOOL someFailed = FALSE;
 
 	// First call WideCharToMultiByte() to get output size to reserve
-	size_t length = WideCharToMultiByte(CP_ACP, 0, input.c_str(), input.size(), NULL, 0, 0, allValidChars ? &someFailed : NULL);
+	size_t length = WideCharToMultiByte(CP_ACP, 0, input.data(), input.size(), NULL, 0, 0, allValidChars ? &someFailed : NULL);
 	assert(length > 0 && "Failed to convert between string encodings, input string is broken.");
 
 	if (allValidChars)
 		*allValidChars = (someFailed == FALSE);
 
-#if _HAS_CXX17
 	std::string outputStr(length, '\0');
 
 	// Actually convert
-	length = WideCharToMultiByte(CP_ACP, 0, input.c_str(), input.size(), outputStr.data(), outputStr.size(), 0, NULL);
+	length = WideCharToMultiByte(CP_ACP, 0, input.data(), input.size(), outputStr.data(), outputStr.size(), 0, NULL);
 	assert(length > 0 && "Failed to convert between string encodings.");
-#else
-	char * outputBuf = (char *)_malloca(length + 1);
-	// Actually convert
-	length = WideCharToMultiByte(CP_ACP, 0, input.c_str(), input.size(), outputBuf, length, 0, 0);
-	assert(length > 0 && "Failed to convert between string encodings.");
-	std::string outputStr(outputBuf, length);
-	_freea(outputBuf);
-#endif
 	assert(input.back() != L'\0' && "Input ends with null.");
 	assert(outputStr.back() != '\0' && "Output ends with null.");
 	return outputStr;
 }
-std::tstring WideToTString(const std::wstring input, bool * const allValidChars /* = nullptr */) {
+std::tstring WideToTString(const std::wstring_view input, bool * const allValidChars /* = nullptr */) {
 #ifdef _UNICODE
 	if (allValidChars)
 		*allValidChars = true;
-	return input;
+	return std::wstring(input);
 #else
 	return WideToANSI(input, allValidChars);
 #endif
 }
-std::string WideToUTF8(const std::wstring input)
+std::string WideToUTF8(const std::wstring_view input)
 {
 	if (input.empty())
 		return std::string();
 
 	// First call WideCharToMultiByte() to get output size to reserve
-	size_t length = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), input.size(), NULL, 0, 0, 0);
+	size_t length = WideCharToMultiByte(CP_UTF8, 0, input.data(), input.size(), NULL, 0, 0, 0);
 	assert(length > 0 && "Failed to convert between string encodings, input string is broken.");
-#if _HAS_CXX17
 	std::string outputStr(length, '\0');
 
 	// Actually convert
-	length = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), input.size(), outputStr.data(), outputStr.size(), 0, 0);
+	length = WideCharToMultiByte(CP_UTF8, 0, input.data(), input.size(), outputStr.data(), outputStr.size(), 0, 0);
 	assert(length > 0 && "Failed to convert between string encodings.");
-#else
-	char * outputBuf = (char *)_malloca(length + 1);
-	// Actually convert
-	length = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), input.size(), outputBuf, length, 0, 0);
-	assert(length > 0 && "Failed to convert between string encodings.");
-	std::string outputStr(outputBuf, length);
-	_freea(outputBuf);
-#endif
 	assert(input.back() != L'\0' && "Input ends with null.");
 	assert(outputStr.back() != '\0' && "Output ends with null.");
 	return outputStr;
 }
-std::string TStringToANSI(const std::tstring input, bool * const allValidChars /* = nullptr */) {
+std::string TStringToANSI(const std::tstring_view input, bool * const allValidChars /* = nullptr */) {
 #ifdef _UNICODE
 	return WideToANSI(input, allValidChars);
 #else
 	if (allValidChars)
 		*allValidChars = true;
-	return input;
+	return std::string(input);
 #endif
 }
-std::string TStringToUTF8(const std::tstring input) {
+std::string TStringToUTF8(const std::tstring_view input) {
 #ifdef _UNICODE
 	return WideToUTF8(input);
 #else
 	return ANSIToUTF8(input);
 #endif
 }
-std::wstring TStringToWide(const std::tstring input) {
+std::wstring TStringToWide(const std::tstring_view input) {
 #ifdef _UNICODE
-	return input;
+	return std::wstring(input);
 #else
 	return ANSIToWide(input);
 #endif
@@ -776,22 +741,22 @@ std::wstring TStringToWide(const std::tstring input) {
 // iconv() would be needed, and it's beyond the scope of a regular extension.
 // Instead, this code merely returns back.
 
-std::tstring ANSIToTString(const std::string input) {
+std::tstring ANSIToTString(const std::string_view input) {
 	return UTF8ToTString(input);
 }
-std::string ANSIToUTF8(const std::string input) {
+std::string ANSIToUTF8(const std::string_view input) {
 	return input;
 }
-std::wstring ANSIToWide(const std::string input) {
+std::wstring ANSIToWide(const std::string_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
 }
-std::string UTF8ToANSI(const std::string input, bool * const allValidChars /* = nullptr */) {
+std::string UTF8ToANSI(const std::string_view input, bool * const allValidChars /* = nullptr */) {
 	return input;
 }
-std::tstring UTF8ToTString(const std::string input, bool * const allValidChars /* = nullptr */) {
+std::tstring UTF8ToTString(const std::string_view input, bool * const allValidChars /* = nullptr */) {
 	return input;
 }
-std::wstring UTF8ToWide(const std::string input) {
+std::wstring UTF8ToWide(const std::string_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
 }
 std::string WideToANSI(const std::wstring input, bool * const allValidChars /* = nullptr */) {
@@ -1117,7 +1082,7 @@ void FusionAPI EditDebugItem(RUNDATA *rdPtr, int id)
 // =====
 
 static std::string sdkSettingsFileContent;
-static std::atomic_bool fileLock;
+static std::atomic<bool> fileLock;
 static bool fileOpened;
 std::string DarkEdif::GetIniSetting(const char * key)
 {
@@ -1442,7 +1407,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 	// If the ext name is found, or the wildcard *
 	if (ini.find(";" PROJECT_NAME ";") != std::string::npos || ini.find(";*;") != std::string::npos)
 	{
-		GetLockAnd(updateLog << "Update check was disabled.";
+		GetLockAnd(updateLog << "Update check was disabled."sv;
 			pendingUpdateType = DarkEdif::SDKUpdater::ExtUpdateType::CheckDisabled);
 		return 0;
 	}
@@ -1455,14 +1420,14 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 			GetLockSetConnectErrorAnd(
-				updateLog << "WSAStartup failed.\n");
+				updateLog << "WSAStartup failed.\n"sv);
 			return 1;
 		}
 		SOCKET Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (Socket == INVALID_SOCKET)
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "socket() failed. Error " << WSAGetLastError() << ".\n");
+				updateLog << "socket() failed. Error "sv << WSAGetLastError() << ".\n"sv);
 			WSACleanup();
 			return 1;
 		}
@@ -1477,19 +1442,20 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		if (host == NULL)
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "getting host " << domain << " failed, error " << WSAGetLastError() << ".");
+				updateLog << "getting host "sv << domain << " failed, error "sv << WSAGetLastError() << "."sv);
 			closesocket(Socket);
 			WSACleanup();
 			return 1;
 		}
-		SOCKADDR_IN SockAddr;
+		SOCKADDR_IN SockAddr = {};
 		SockAddr.sin_port = htons(80);
 		SockAddr.sin_family = AF_INET;
 		SockAddr.sin_addr.s_addr = *((unsigned long *)host->h_addr);
-		updateLog << "Connecting...\n";
+		GetLockAnd(
+			updateLog << "Connecting...\n"sv);
 		if (connect(Socket, (SOCKADDR *)(&SockAddr), sizeof(SockAddr)) != 0) {
 			GetLockSetConnectErrorAnd(
-				updateLog << "Connect failed, error " << WSAGetLastError() << ".");
+				updateLog << "Connect failed, error "sv << WSAGetLastError() << "."sv);
 			closesocket(Socket);
 			WSACleanup();
 			return 1;
@@ -1499,24 +1465,24 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		// Host necessary so servers serving multiple domains know what domain is requested.
 		// Connection: close indicates server should close connection after transfer.
 		std::stringstream requestStream;
-		requestStream << "GET /storage/darkedif_vercheck.php?ext=" << url_encode(PROJECT_NAME)
-			<< "&build=" << Extension::Version << "&sdkBuild=" << DarkEdif::SDKVersion
-			<< "&projConfig=" << projConfig
-			<< " HTTP/1.1\r\nHost: " << domain << "\r\nConnection: close\r\n\r\n";
+		requestStream << "GET /storage/darkedif_vercheck.php?ext="sv << url_encode(PROJECT_NAME)
+			<< "&build="sv << Extension::Version << "&sdkBuild="sv << DarkEdif::SDKVersion
+			<< "&projConfig="sv << projConfig
+			<< " HTTP/1.1\r\nHost: "sv << domain << "\r\nConnection: close\r\n\r\n"sv;
 		std::string request = requestStream.str();
 
 		GetLockAnd(
-			updateLog << "Sent update request for ext \"" PROJECT_NAME "\", encoded as \"" << url_encode(PROJECT_NAME)
-				<< "\", build " << Extension::Version << ", SDK build " << DarkEdif::SDKVersion << ", config " << projConfig << ".\n");
+			updateLog << "Sent update request for ext \"" PROJECT_NAME "\", encoded as \""sv << url_encode(PROJECT_NAME)
+				<< "\", build "sv << Extension::Version << ", SDK build "sv << DarkEdif::SDKVersion << ", config "sv << projConfig << ".\n"sv);
 #ifdef _DEBUG
 		GetLockAnd(
-			updateLog << request.substr(0, request.find(' ', 4)) << "\n");
+			updateLog << request.substr(0, request.find(' ', 4)) << '\n');
 #endif
 
 		if (send(Socket, request.c_str(), request.size() + 1, 0) == SOCKET_ERROR)
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "Send failed, error " << WSAGetLastError() << ".");
+				updateLog << "Send failed, error "sv << WSAGetLastError() << "."sv);
 			closesocket(Socket);
 			WSACleanup();
 			return 1;
@@ -1530,7 +1496,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 			int nDataLength;
 
 			GetLockAnd(
-				updateLog << "Result follows:\n");
+				updateLog << "Result follows:\n"sv);
 			while ((nDataLength = recv(Socket, pagePart.data(), pagePart.size(), 0)) > 0) {
 				page << std::string_view(pagePart).substr(0, nDataLength);
 				memset(pagePart.data(), 0, nDataLength);
@@ -1538,13 +1504,13 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 			if (nDataLength < 0)
 			{
 				GetLockSetConnectErrorAnd(
-					updateLog << "Error " << WSAGetLastError() << " with recv().");
+					updateLog << "Error "sv << WSAGetLastError() << " with recv()."sv);
 				closesocket(Socket);
 				WSACleanup();
 				return 1;
 			}
 			GetLockAnd(
-				updateLog << "\nResult concluded.\n";
+				updateLog << "\nResult concluded.\n"sv;
 			OutputDebugStringA(updateLog.str().c_str()));
 			closesocket(Socket);
 			WSACleanup();
@@ -1559,7 +1525,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		if (endIndex == std::string::npos)
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "End of first line not found. Full raw (non-http) response:\n" << fullPage);
+				updateLog << "End of first line not found. Full raw (non-http) response:\n"sv << fullPage);
 			return 1;
 		}
 
@@ -1569,7 +1535,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		if (endIndex == std::string::npos || strncmp(statusLine.c_str(), expHttpHeader, sizeof(expHttpHeader) - 1))
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "Unexpected non-http response:\n" << statusLine);
+				updateLog << "Unexpected non-http response:\n"sv << statusLine);
 			return 1;
 		}
 
@@ -1577,7 +1543,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		if (strncmp(statusLine.c_str(), expHttpOKHeader, sizeof(expHttpOKHeader) - 1))
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "HTTP error " << statusLine.substr(sizeof(expHttpHeader) - 1));
+				updateLog << "HTTP error "sv << statusLine.substr(sizeof(expHttpHeader) - 1));
 			return 1;
 		}
 
@@ -1595,7 +1561,7 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		if (pageBody.find('\r') != std::string::npos)
 		{
 			GetLockSetConnectErrorAnd(
-				updateLog << "CR not permitted in update page response.\n" << pageBody);
+				updateLog << "CR not permitted in update page response.\n"sv << pageBody);
 			return 1;
 		}
 
@@ -1606,9 +1572,9 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		}
 
 		GetLockAnd(
-			updateLog << "Completed OK. Response:\n" << pageBody;
+			updateLog << "Completed OK. Response:\n"sv << pageBody;
 		);
-		if (pageBody == "None")
+		if (pageBody == "None"sv)
 		{
 			GetLockAnd(
 				pendingUpdateType = DarkEdif::SDKUpdater::ExtUpdateType::None;
@@ -1651,14 +1617,14 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 		}
 
 		GetLockSetConnectErrorAnd(
-			updateLog << "Can't interpret type. Page content is:\n" << pageBody;
+			updateLog << "Can't interpret type. Page content is:\n"sv << pageBody;
 			pendingUpdateDetails = UTF8ToWide(pageBody));
 		return 0;
 	}
 	catch (...)
 	{
 		GetLockAnd(
-			updateLog << "Caught a crash. Aborting update.");
+			updateLog << "Caught a crash. Aborting update."sv);
 		OutputDebugStringA(updateLog.str().c_str());
 		return 0;
 	}
