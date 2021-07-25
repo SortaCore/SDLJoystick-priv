@@ -4,8 +4,8 @@
 	"UK English": {
 		"About": {
 			"Name": "SDL Joystick object",
-			"Author": "PkR",
-			"Copyright": "Copyright \u00A9 2020 by PkR and Phi",
+			"Author": "PkR and Phi",
+			"Copyright": "Copyright \u00A9 2021 by PkR and Phi",
 			"Comment": "Use the SDL2 Joystick API to interface with game controllers. (DarkEdif b%i, SDL %d.%d.%d)",
 			"Help": "Help/SDLJoy.chm",
 			"URL": ""

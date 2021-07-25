@@ -265,7 +265,7 @@ REFLAG Extension::Handle()
 		// Axes
 		for (int a = 0; a < SDL_Data[i].num_axes; a++)
 			SDL_Data[i].axis[a] = SDL_JoystickGetAxis(SDL_Data[i].joystick, a);
-		// Buttons
+		// Buttons pressed
 		for (int b = 0; b < SDL_Data[i].num_buttons; b++)
 		{
 			SDL_Data[i].held_buttons_last[b] = SDL_Data[i].held_buttons[b];
@@ -301,6 +301,17 @@ REFLAG Extension::Handle()
 					}
 				}
 			}
+		}
+		// Buttons last pressed/released
+		for (int b = 0; b < SDL_Data[i].num_buttons; b++)
+		{
+			if (SDL_Data[i].held_buttons[b])
+			{
+				if (!SDL_Data[i].held_buttons_last[b])
+					SDL_Data[i].lastpressed = b;
+			}
+			else if (SDL_Data[i].held_buttons_last[b])
+				SDL_Data[i].lastreleased = b;
 		}
 		// Hats
 		for (int h = 0; h < SDL_Data[i].num_hats; h++)
