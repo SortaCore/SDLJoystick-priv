@@ -72,6 +72,7 @@ typedef unsigned short ushort;
 typedef unsigned int uint;
 
 #include <stdio.h>
+#include <iomanip>
 #include <tchar.h>
 
 struct ACEParamReader {
@@ -1480,7 +1481,11 @@ enum class Params : short {
 	Playfield_Zone,					// ParamZone
 	System_Create,					// ParamCreate
 	Expression = 22,				// ParamExpression
-	Comparison,						// ParamComparison
+	// ParamComparison, also PARAM_COMPARAISON [sic] or PARAM_COMPARISON.
+	// Used in conditions only. Expects condition to return an int, and user is asked to give a value expression and math op to compare with.
+	// The parameter is int in C++, but can be ignored, as Fusion handles the comparison.
+	// Return the int to compare with the condition function.
+	Comparison,
 	Colour,							// ParamColour
 	Buffer,							// ParamBuffer
 	Frame,							// ParamFrame - Storyboard frame number
@@ -1498,11 +1503,15 @@ enum class Params : short {
 	Group_Pointer,					// ParamGroupPointer
 	Filename,						// ParamFilename
 	String,							// ParamString
-	Compare_Time,					// ParamCmpTime
+	// ParamCmpTime; PARAM_CMPTIME. See Comparison above.
+	// Condition should return int type (time in milliseconds to compare to), and expect C++ int parameter.
+	Compare_Time,
 	Paste_Sprite,					// ParamPasteSprite
 	Virtual_Key_Code,				// ParamVKCode
 	String_Expression,				// ParamStringExp
-	String_Comparison,				// ParamStringExp also
+	// ParamCmpString; PARAM_CMPSTRING. See Comparison above.
+	// Condition should return text type (const TCHAR *), and expect C++ text type parameter.
+	String_Comparison,
 	Ink_Effect,						// ParamInkEffect
 	Menu,							// ParamMenu
 	Global_Variable,				// ParamVariable
@@ -1680,7 +1689,7 @@ struct ParamGroup {
 		/* Old flags
 		FADE_IN			= bit3,
 		FADE_OUT		= bit4,
-		UNICODE			= bit5,*/
+		UNICODE_		= bit5,*/
 	};
 };
 #define GETEVPGRP(evpPtr) (paramGroup *)&evpPtr->evp.evp0
@@ -2622,47 +2631,48 @@ typedef AltVals *	LPRVAL;
 typedef void (* RCROUTINE)(HeaderObject *);
 struct rCom {
 
-	int		rcOffsetAnimation; 			// Offset to anims structures
-	int		rcOffsetSprite;				// Offset to sprites structures
+	int			rcOffsetAnimation; 		// Offset to anims structures
+	int			rcOffsetSprite;			// Offset to sprites structures
 	RCROUTINE	rcRoutineMove;			// Offset to movement routine
 	RCROUTINE	rcRoutineAnimation;		// Offset to animation routine
 
-	int	   	rcPlayer;					// Player who controls
+	int	   		rcPlayer;				// Player who controls
 
-	int	   	rcNMovement;				// Number of the current movement
+	int	   		rcNMovement;			// Number of the current movement
 	CRunMvt *	rcRunMvt;				// Pointer to extension movement
-	Spr  	rcSprite;					// Sprite ID if defined
-	int	 	rcAnim;						// Wanted animation
-	int	   	rcImage;					// Current frame
-	float	rcScaleX;
-	float	rcScaleY;
+	Spr *  		rcSprite;				// Sprite ID if defined
+	int	 		rcAnim;					// Wanted animation
+	int	   		rcImage;				// Current frame
+	float		rcScaleX;
+	float		rcScaleY;
 	AngleVar	rcAngle;
-	int	   	rcDir;						// Current direction
-	int	   	rcSpeed;					// Current speed
-	int	   	rcMinSpeed;					// Minimum speed
-	int	   	rcMaxSpeed;					// Maximum speed
-	BOOL	rcChanged;					// Flag: modified object
-	BOOL	rcCheckCollides;			// For static objects
+	int	   		rcDir;					// Current direction
+	int	   		rcSpeed;				// Current speed
+	int	   		rcMinSpeed;				// Minimum speed
+	int	   		rcMaxSpeed;				// Maximum speed
+	BOOL		rcChanged;				// Flag: modified object
+	BOOL		rcCheckCollides;		// For static objects
 
-	int	 	rcOldX;						// Previous coordinates
-	int	 	rcOldY;
-	int	 	rcOldImage;
+	int	 		rcOldX;					// Previous coordinates
+	int	 		rcOldY;
+	int	 		rcOldImage;
 	AngleVar	rcOldAngle;
-	int	 	rcOldDir;
-	int	 	rcOldX1;					// For zone detections
-	int	 	rcOldY1;
-	int	 	rcOldX2;
-	int	 	rcOldY2;
+	int	 		rcOldDir;
+	int	 		rcOldX1;					// For zone detections
+	int	 		rcOldY1;
+	int	 		rcOldX2;
+	int	 		rcOldY2;
 
-	long	rcFadeIn;
-	long	rcFadeOut;
-
+	long		rcFadeIn;
+	long		rcFadeOut;
 };
 
 
 // ------------------------------------------------------------
 // ACTIVE OBJECTS DATAZONE
 // ------------------------------------------------------------
+
+// RUNDATA, but with all OEFlags and all parts, like what an Active object has
 struct RunObject {
 
 	HeaderObject  	roHo;		  		// Common structure
@@ -2674,12 +2684,12 @@ struct RunObject {
 	AltVals			rov;				// Values structure
 
 };
-//typedef	RunObject *				RunObject *;
-//typedef RunObject *				LPRUNOBJECT;
+//typedef RunObject *	FPRUNOBJECT;
+//typedef RunObject *	LPRUNOBJECT;
 
-#define	GOESINPLAYFIELD			bit1
-#define	GOESOUTPLAYFIELD			bit2
-#define	WRAP						bit3
+#define	GOESINPLAYFIELD		bit1
+#define	GOESOUTPLAYFIELD	bit2
+#define	WRAP				bit3
 
 
 
@@ -4339,7 +4349,6 @@ __inline int mvGetAppCodePage(mv * mV, void * pApp) \
 typedef	int (CALLBACK* ENUMELTPROC)(unsigned short *, int, LPARAM, LPARAM);
 
 // kpxGetInfos
-#undef UNICODE
 enum class KGI : int {
 	VERSION,			// Version (required)
 	NOTUSED,			// Not used
@@ -4349,7 +4358,7 @@ enum class KGI : int {
 	ATX_CONTROL,		// Not used
 	PRODUCT,			// Minimum product the extension is compatible with
 	BUILD,				// Minimum build the extension is compatible with
-	UNICODE,			// Returns TRUE if the extension is in Unicode
+	UNICODE_,			// Returns TRUE if the extension is in Unicode
 };
 
 // Extension function table

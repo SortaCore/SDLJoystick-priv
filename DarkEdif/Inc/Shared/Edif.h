@@ -1,4 +1,3 @@
-
 #pragma once
 
 
@@ -7,8 +6,22 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <sstream>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <atomic>
 
-#include "MMFMasterHeader.h"
+#ifdef _WIN32
+#include "..\Windows\MMFMasterHeader.h"
+#elif defined (__ANDROID__)
+#include "..\Android\MMFAndroidMasterHeader.h"
+#elif defined (__APPLE__)
+#include "../iOS/MMFiOSMasterHeader.h"
+#endif
+#include "json.h"
 
 /*
 #include "ccxhdr.h"
@@ -19,26 +32,24 @@
 #include "Patch.h"
 */
 
-
-
 class Extension;
 
 #include "ObjectSelection.h"
 
-#if EditorBuild
+#ifndef RUN_ONLY
 #if defined(MMFEXT)
-#	define IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20 && ((v->GetVersion() & MMFVERFLAG_MASK) & MMFVERFLAG_HOME) == 0)
+#define	IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20 && ((v->GetVersion() & MMFVERFLAG_MASK) & MMFVERFLAG_HOME) == 0)
 #elif defined(PROEXT)
-#	define IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20 && ((v->GetVersion() & MMFVERFLAG_MASK) & MMFVERFLAG_PRO) != 0)
-#else // TGFEXT assumed
-#	define IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20)
+#define IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20 && ((v->GetVersion() & MMFVERFLAG_MASK) & MMFVERFLAG_PRO) != 0)
+#else
+#define	IS_COMPATIBLE(v) (v->GetVersion != nullptr && (v->GetVersion() & MMFBUILD_MASK) >= Extension::MinimumBuild && (v->GetVersion() & MMFVERSION_MASK) >= MMFVERSION_20)
 #endif
-#else // Runtime build
-#	define IS_COMPATIBLE(v) (false)
+#else
+#define IS_COMPATIBLE(v) (false)
 #endif
 
 // DarkEdif provides C++11 type checking between JSON and C++ definition.
-#if defined(_DEBUG) && !defined(FAST_ACE_LINK)
+#if defined(_DEBUG) && defined(_WIN32) && !defined(FAST_ACE_LINK)
 
 #define LinkAction(ID, Function) \
 	LinkActionDebug(ID, &Extension::Function);
@@ -64,18 +75,14 @@ extern HINSTANCE hInstLib;
 
 struct RUNDATA;
 struct EDITDATA;
-
-//typedef RUNDATA * RUNDATA *;
-//typedef EDITDATA * EDITDATA *;
 struct ACEInfo;
 namespace Edif
 {
 	// New access properties
-#if EditorBuild
 	namespace Properties
 	{
 		// Synced with Names
-		const enum IDs {
+		enum IDs {
 			PROPTYPE_STATIC = 1,		// Simple static text
 			PROPTYPE_FOLDER,			// Folder
 			PROPTYPE_FOLDER_END,		// Folder End
@@ -109,7 +116,7 @@ namespace Edif
 		};
 
 		// Synced with PropertyIDs
-		static const char * Names [] = {
+		static const char* Names[] = {
 			"!Start item",		// IDs starts with 1
 			"Text",
 			"Folder",
@@ -139,8 +146,7 @@ namespace Edif
 			"Editbox Folder",
 			"Edit spin float",
 		};
-	}
-#endif // EditorBuild
+	};
 	class SDK
 	{
 	public:
@@ -161,12 +167,11 @@ namespace Edif
 		std::vector<void *> ActionFunctions;
 		std::vector<void *> ConditionFunctions;
 		std::vector<void *> ExpressionFunctions;
-		mv * mV;
 
-#if EditorBuild
-		PropData * EdittimeProperties;
+		mv* mV;
+#ifdef _WIN32
 		cSurface * Icon;
-		HGLOBAL UpdateProperties(mv * mV, void * OldEdPtr);
+		PropData * EdittimeProperties;
 #endif
 	};
 
@@ -174,13 +179,29 @@ namespace Edif
 	{
 	protected:
 
-		RUNDATA * rdPtr;
+#ifdef _WIN32
+		HeaderObject * hoPtr;
+#elif defined(__ANDROID__)
+		RuntimeFunctions &runFuncs;
+		global<jobject> javaExtPtr;
+		global<jclass> javaExtPtrClass;
+		global<jobject> javaHoObject;
+		global<jclass> javaHoClass;
+#else
+		RuntimeFunctions& runFuncs;
+		void * objCExtPtr;
+#endif
 
 	public:
-
 		long param1, param2;
 
-		Runtime(RUNDATA * _rdPtr);
+#ifdef _WIN32
+		Runtime(HeaderObject * _hoPtr);
+#elif defined(__ANDROID__)
+		Runtime(RuntimeFunctions & runFuncs, jobject javaExtPtr);
+#else
+		Runtime(RuntimeFunctions &runFuncs, void * objCExtPtr);
+#endif
 		~Runtime();
 
 		void Rehandle();
@@ -193,6 +214,14 @@ namespace Edif
 		char * CopyStringEx(const char *);
 		wchar_t * CopyStringEx(const wchar_t *);
 
+#ifdef __ANDROID__
+		// Attaches current thread, and gets JNIEnv for it; errors are fatal
+		static JNIEnv * AttachJVMAccessForThisThread(const char * threadName, bool asDaemon = false);
+		static void DetachJVMAccessForThisThread();
+		// Gets JNIEnv * for this thread, or null.
+		inline static JNIEnv * GetJNIEnvForThisThread();
+#endif
+
 		void Pause();
 		void Resume();
 
@@ -202,7 +231,9 @@ namespace Edif
 		int FixedFromRunObjPtr(RunObject * object);
 
 		void SetPosition(int X, int Y);
+#ifdef _WIN32
 		CallTables * GetCallTables();
+#endif
 		void CallMovement(int ID, long Parameter);
 
 		void Destroy();
@@ -213,15 +244,17 @@ namespace Edif
 		void GetApplicationName(TCHAR * Buffer);
 		void GetApplicationTempPath(TCHAR * Buffer);
 
+#ifdef _WIN32
 		void ExecuteProgram(ParamProgram * Program);
 
 		long EditInteger(EditDebugInfo *);
 		long EditText(EditDebugInfo *);
 
+		event2 &CurrentEvent();
+#endif
+
 		bool IsHWA();
 		bool IsUnicode();
-
-		event2 &CurrentEvent();
 
 		Riggs::ObjectSelection ObjectSelection;
 
@@ -237,8 +270,9 @@ namespace Edif
 	};
 
 	extern bool ExternalJSON;
-
+#ifdef _WIN32
 	void GetSiblingPath (TCHAR * Buffer, const TCHAR * Extension);
+#endif
 
 	const int DependencyNotFound	 = 0;
 	const int DependencyWasFile	  = 1;
@@ -263,9 +297,15 @@ namespace Edif
 	int Init(mv * mV);
 	void Init(mv * mV, EDITDATA * edPtr);
 
-	long FusionAPI Condition (RUNDATA * rdPtr, long param1, long param2);
-	short FusionAPI Action (RUNDATA * rdPtr, long param1, long param2);
-	long FusionAPI Expression (RUNDATA * rdPtr, long param);
+	void Free(mv * mV);
+	void Free(EDITDATA * edPtr);
+
+#ifdef _WIN32
+	long __stdcall Condition (RUNDATA * rdPtr, long param1, long param2);
+	short __stdcall Action (RUNDATA * rdPtr, long param1, long param2);
+	long __stdcall Expression (RUNDATA * rdPtr, long param);
+	// handled
+#endif
 
 	inline int ActionID(int ID)
 	{
@@ -282,12 +322,46 @@ namespace Edif
 		return 27000 + ID;
 	}
 
+
 	template<class T> inline void * MemberFunctionPointer(T Function)
 	{
 		T _Function = Function;
 		return *(void **) &_Function;
 	}
 
+	std::string CurrentFolder();
 	void GetExtensionName(char * const writeTo);
-}
+	void Log(const char * format, ...);
+
+	class recursive_mutex {
+		std::recursive_mutex intern;
+#ifdef _DEBUG
+#define edif_lock_debugParams const char * file, const char * func, int line
+#define edif_lock_debugParamDefs __FILE__, __FUNCTION__, __LINE__
+		std::stringstream log;
+#else
+#define edif_lock_debugParams /* none */
+#define edif_lock_debugParamDefs /* none */
+#endif
+	public:
+		recursive_mutex();
+		~recursive_mutex();
+
+		// Don't use these directly! Use lock.edif_lock(), lock.edif_unlock(), etc.
+		void lock(edif_lock_debugParams);
+		bool try_lock(edif_lock_debugParams);
+		void unlock(edif_lock_debugParams);
+
+#define edif_lock() lock(edif_lock_debugParamDefs)
+#define edif_try_lock() try_lock(edif_lock_debugParamDefs)
+#define edif_unlock() unlock(edif_lock_debugParamDefs)
+	};
+
+};
+
+#ifdef __ANDROID__
+ProjectFunc jlong condition(JNIEnv *, jobject, jlong extPtr, jint cndID, CCndExtension cnd);
+ProjectFunc void action(JNIEnv *, jobject, jlong extPtr, jint actID, CActExtension act);
+ProjectFunc void expression(JNIEnv *, jobject, jlong extPtr, jint expID, CNativeExpInstance exp);
+#endif
 extern Edif::SDK * SDK;

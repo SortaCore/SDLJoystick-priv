@@ -13,18 +13,17 @@
 *.png 	binary
 *.gif 	binary
 
-*.cs text=auto diff=csharp 
+*.cs text=auto diff=csharp
 *.vb text=auto
+
 *.py text=auto
 *.rb text=auto
 *.java text=auto
-*.html text=auto eol=lf
-*.htm text=auto eol=lf
+*.js text=auto eol=lf
 *.css text=auto
 *.scss text=auto
 *.sass text=auto
 *.less text=auto
-*.js text=auto
 *.lisp text=auto
 *.clj text=auto
 *.sql text=auto
@@ -37,11 +36,14 @@
 *.fsx text=auto
 *.hs text=auto
 
-*.csproj text=auto merge=union 
-*.vbproj text=auto merge=union 
-*.fsproj text=auto merge=union 
-*.dbproj text=auto merge=union 
-*.sln text=auto eol=crlf merge=union 
+*.csproj text=auto merge=union
+*.vbproj text=auto merge=union
+*.fsproj text=auto merge=union
+*.dbproj text=auto merge=union
+
+*.vcxproj text=auto merge=union
+*.sln text=auto eol=crlf merge=union
+
 
 # From the editorconfig
 *.c text eol=lf

@@ -88,7 +88,7 @@ ExpReturnType ReadExpressionReturnType(const char * Text);
 bool CreateNewActionInfo(void)
 {
 	// Get ID and thus properties by counting currently existing actions.
-	const json_value & Action = CurLang["Actions"][::SDK->ActionInfos.size()];
+	const json_value & Action = CurLang["Actions"][(std::int32_t)::SDK->ActionInfos.size()];
 
 	// Invalid JSON reference
 	if (Action.type != json_object)
@@ -123,7 +123,7 @@ bool CreateNewActionInfo(void)
 	{
 		// Set up each parameter
 		bool IsFloat;
-		for (char c = 0; c < ActInfo->NumOfParams; ++c)
+		for (std::uint8_t c = 0; c < ActInfo->NumOfParams; ++c)
 		{
 			IsFloat = false;
 			ActInfo->Parameter[c].p = ReadParameterType(Param[c][0], IsFloat);	// Store parameter type
@@ -142,7 +142,7 @@ bool CreateNewActionInfo(void)
 bool CreateNewConditionInfo(void)
 {
 	// Get ID and thus properties by counting currently existing conditions.
-	const json_value & Condition = CurLang["Conditions"][::SDK->ConditionInfos.size()];
+	const json_value & Condition = CurLang["Conditions"][(std::int32_t)::SDK->ConditionInfos.size()];
 
 	// Invalid JSON reference
 	if (Condition.type != json_object)
@@ -179,7 +179,7 @@ bool CreateNewConditionInfo(void)
 	{
 		// Set up each parameter
 		bool IsFloat;
-		for (char c = 0; c < CondInfo->NumOfParams; ++c)
+		for (std::uint8_t c = 0; c < CondInfo->NumOfParams; ++c)
 		{
 			IsFloat = false;
 			CondInfo->Parameter[c].p = ReadParameterType(Param[c][0], IsFloat);	// Store parameter type
@@ -198,7 +198,7 @@ bool CreateNewConditionInfo(void)
 bool CreateNewExpressionInfo(void)
 {
 	// Get ID and thus properties by counting currently existing conditions.
-	const json_value & Expression = CurLang["Expressions"][::SDK->ExpressionInfos.size()];
+	const json_value & Expression = CurLang["Expressions"][(std::int32_t)::SDK->ExpressionInfos.size()];
 
 	// Invalid JSON reference
 	if (Expression.type != json_object)
@@ -235,7 +235,7 @@ bool CreateNewExpressionInfo(void)
 	{
 		// Set up each parameter
 		bool IsFloat;
-		for (char c = 0; c < ExpInfo->NumOfParams; ++c)
+		for (std::uint8_t c = 0; c < ExpInfo->NumOfParams; ++c)
 		{
 			IsFloat = false;
 			ExpInfo->Parameter[c].ep = ReadExpressionParameterType(Param[c][0], IsFloat);	// Store parameter type
@@ -428,7 +428,6 @@ Prop * GetProperty(EDITDATA * edPtr, size_t ID)
 
 	return ret;
 }
-#endif
 
 void PropChangeChkbox(EDITDATA * edPtr, unsigned int PropID, const bool newValue)
 {
@@ -515,11 +514,13 @@ void PropChange(mv * mV, EDITDATA * &edPtr, unsigned int PropID, const void * ne
 	edPtr = fusionNewEdPtr; // Inform caller of new address
 }
 
+#endif // EditorBuild
+
 char * PropIndex(EDITDATA * edPtr, unsigned int ID, unsigned int * size)
 {
 	char * Current = &edPtr->DarkEdif_Props[(size_t)ceil(CurLang["Properties"].u.array.length / 8.0f)], * StartPos, * EndPos;
 
-	json_value j = CurLang["Properties"];
+	const json_value &j = CurLang["Properties"];
 	if (j.type != json_array)
 	{
 		char msgTitle [128] = {0};
@@ -529,7 +530,7 @@ char * PropIndex(EDITDATA * edPtr, unsigned int ID, unsigned int * size)
 		return nullptr;
 	}
 
-	const char * curStr = (const char *)j[ID]["Type"];
+	const char * curStr = (const char *)j[(int)ID]["Type"];
 	// Read unchangable properties
 	if (!_stricmp(curStr, "Text") || !_stricmp(curStr, "Checkbox") || !_strnicmp(curStr, "Folder", sizeof("Folder") - 1))
 		return nullptr;
@@ -538,10 +539,10 @@ char * PropIndex(EDITDATA * edPtr, unsigned int ID, unsigned int * size)
 
 	// Read changable properties
 	StartPos = Current; // For ID 0
-	unsigned int i = 0;
+	size_t i = 0;
 	while (i <= ID)
 	{
-		curStr = (const char *)j[i]["Type"];
+		curStr = (const char *)j[(std::int32_t)i]["Type"];
 
 		if (!_stricmp(curStr, "Editbox String"))
 			Current += strlen(Current) + 1;
@@ -557,7 +558,7 @@ char * PropIndex(EDITDATA * edPtr, unsigned int ID, unsigned int * size)
 	EndPos = Current;
 
 	if (size)
-		*size = EndPos - StartPos;
+		*size = (std::uint32_t)(EndPos - StartPos);
 	return StartPos;
 }
 
@@ -567,20 +568,6 @@ char * PropIndex(EDITDATA * edPtr, unsigned int ID, unsigned int * size)
 // Get event number (CF2.5+ feature)
 // =====
 
-/// <summary> If error, -1 is returned. </summary>
-std::pair<int, int> GetFusionEventLocation(const Extension * const ext)
-{
-	int frameNum = ext->rhPtr->App ? ext->rhPtr->App->nCurrentFrame : -1;
-
-	// Can we read current event?
-	if (!ext->rhPtr->EventGroup)
-		return std::make_pair(-1, frameNum);
-
-	int eventNum = ext->rhPtr->EventGroup->evgIdentifier;
-	if (eventNum == 0)
-		return std::make_pair(-1, frameNum);
-	return std::make_pair(eventNum, frameNum);
-}
 
 // Static definition; set during SDK::SDK()
 bool DarkEdif::IsFusion25;
@@ -591,6 +578,25 @@ std::uint16_t DarkEdif::GetEventNumber(eventGroup * evg) {
 		return evg->evgInhibit;
 	}
 	return evg->evgIdentifier;
+}
+
+/// <summary> If error, -1 is returned. </summary>
+int DarkEdif::GetCurrentFusionEventNum(const Extension * const ext)
+{
+#ifdef _WIN32
+	// Can we read current event?
+	if (!ext->rhPtr->EventGroup)
+		return -1;
+
+	int eventNum = GetEventNumber(ext->rhPtr->EventGroup);
+	if (eventNum == 0)
+		return -1;
+	return eventNum;
+#else // Can't read event yet
+
+
+	return -1;
+#endif
 }
 
 // =====
@@ -733,6 +739,12 @@ std::wstring TStringToWide(const std::tstring_view input) {
 #endif
 }
 
+/// <summary> Creates a Prop_Str from UTF-8 char *. Allocated by new. </summary>
+Prop_Str * Prop_Str_FromUTF8(const char * u8)
+{
+	return new Prop_Str(UTF8ToTString(u8).c_str());
+}
+
 #else // !_WIN32
 
 // Linux-based OSes including Android uses UTF-8 by default.
@@ -745,46 +757,46 @@ std::tstring ANSIToTString(const std::string_view input) {
 	return UTF8ToTString(input);
 }
 std::string ANSIToUTF8(const std::string_view input) {
-	return input;
+	return std::string(input);
 }
 std::wstring ANSIToWide(const std::string_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::wstring();
 }
 std::string UTF8ToANSI(const std::string_view input, bool * const allValidChars /* = nullptr */) {
-	return input;
+	return std::string(input);
 }
 std::tstring UTF8ToTString(const std::string_view input, bool * const allValidChars /* = nullptr */) {
-	return input;
+	return std::tstring(input);
 }
 std::wstring UTF8ToWide(const std::string_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::wstring();
 }
-std::string WideToANSI(const std::wstring input, bool * const allValidChars /* = nullptr */) {
+std::string WideToANSI(const std::wstring_view input, bool * const allValidChars /* = nullptr */) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::string();
 }
-std::tstring WideToTString(const std::wstring input, bool * const allValidChars /* = nullptr */) {
+std::tstring WideToTString(const std::wstring_view input, bool * const allValidChars /* = nullptr */) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::tstring();
 }
-std::string WideToUTF8(const std::wstring input) {
+std::string WideToUTF8(const std::wstring_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::string();
 }
-std::string TStringToANSI(const std::tstring input, bool * const allValidChars /* = nullptr */) {
+std::string TStringToANSI(const std::tstring_view input, bool * const allValidChars /* = nullptr */) {
 	return TStringToUTF8(input);
 }
-std::string TStringToUTF8(const std::tstring input) {
-	return input;
+std::string TStringToUTF8(const std::tstring_view input) {
+	return std::string(input);
 }
-std::wstring TStringToWide(const std::tstring input) {
+std::wstring TStringToWide(const std::tstring_view input) {
 	assert(false && "Linux-based Wide not programmed yet.");
+	return std::wstring();
 }
 
 #endif
-
-/// <summary> Creates a Prop_Str from UTF-8 char *. Allocated by new. </summary>
-Prop_Str * Prop_Str_FromUTF8(const char * u8)
-{
-	return new Prop_Str(UTF8ToTString(u8).c_str());
-}
 
 // =====
 // Object properties; read user values from properties in Extension ctor
@@ -802,8 +814,8 @@ std::tstring EDITDATA::GetPropertyStr(const char * propName)
 	const json_value &props = CurLang["Properties"];
 	for (size_t i = 0; i < props.u.array.length; i++)
 	{
-		if (!_stricmp(props[i]["Title"], propName))
-			return GetPropertyStr(i);
+		if (!_stricmp(props[(std::int32_t)i]["Title"], propName))
+			return GetPropertyStr((int)i);
 	}
 	return _T("Property name not found.");
 }
@@ -815,7 +827,7 @@ std::tstring EDITDATA::GetPropertyStr(int propID)
 
 	const json_value &prop = CurLang["Properties"][propID];
 	if (!_stricmp(prop["Type"], "Combo Box"))
-		return UTF8ToTString((const char  *)prop["Items"][*(unsigned int *)PropIndex(this, propID, nullptr)]);
+		return UTF8ToTString((const char  *)prop["Items"][*(int *)PropIndex(this, propID, nullptr)]);
 	else if (!_stricmp(prop["Type"], "Editbox String"))
 	{
 		unsigned int propDataSize = 0;
@@ -826,7 +838,79 @@ std::tstring EDITDATA::GetPropertyStr(int propID)
 	else
 		return _T("Property not textual.");
 }
-#endif // NOPROPS
+#endif // not NOPROPS
+
+
+#ifdef __ANDROID__
+extern thread_local JNIEnv * threadEnv;
+static jobject getGlobalContext()
+{
+	jclass activityThread = threadEnv->FindClass("android/app/ActivityThread");
+	jmethodID currentActivityThread = threadEnv->GetStaticMethodID(activityThread, "currentActivityThread", "()Landroid/app/ActivityThread;");
+	jobject at = threadEnv->CallStaticObjectMethod(activityThread, currentActivityThread);
+
+	jmethodID getApplication = threadEnv->GetMethodID(activityThread, "getApplication", "()Landroid/app/Application;");
+	jobject context = threadEnv->CallObjectMethod(at, getApplication);
+	return context;
+}
+int MessageBoxA(HWND hwnd, const TCHAR * text, const TCHAR * caption, int iconAndButtons)
+{
+	jclass toast = threadEnv->FindClass("android/widget/Toast");
+	jobject globalContext = getGlobalContext();
+	jmethodID methodMakeText = threadEnv->GetStaticMethodID(toast, "makeText", "(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;");
+	if (methodMakeText == NULL) {
+		LOGE("toast.makeText not Found");
+		return 0;
+	}
+
+	std::string toastText = caption + std::string(" -  ") + text;
+	jstring toastTextJStr = CStrToJStr(toastText.c_str());
+
+	jobject toastobj = threadEnv->CallStaticObjectMethod(toast, methodMakeText, globalContext, toastTextJStr, 1 /* toast length long, 0 for short*/);
+
+	// Java: toastobj.show();
+	jmethodID methodShow = threadEnv->GetMethodID(toast, "show", "()V");
+	threadEnv->CallVoidMethod(toastobj, methodShow);
+
+	__android_log_print(iconAndButtons, PROJECT_NAME_UNDERSCORES, "Msg Box swallowed: \"%s\", %s.", caption, text);
+	if (!strncmp(caption, "DarkEdif", sizeof("DarkEdif") - 1) && (iconAndButtons & MB_ICONERROR) != 0)
+		DarkEdif::BreakIfDebuggerAttached();
+	return 0;
+}
+
+void DarkEdif::BreakIfDebuggerAttached()
+{
+	raise(SIGINT);
+}
+#elif defined(_WIN32)
+
+void DarkEdif::BreakIfDebuggerAttached()
+{
+	if (IsDebuggerPresent())
+		DebugBreak();
+}
+#else // APPLE
+void DarkEdif::BreakIfDebuggerAttached()
+{
+	__builtin_trap();
+}
+
+int MessageBoxA(HWND hwnd, const TCHAR * text, const TCHAR * caption, int iconAndButtons)
+{
+	DarkEdif::BreakIfDebuggerAttached();
+	return 0;
+}
+
+void LOGF(const char * x, ...)
+{
+	char buf[2048];
+	va_list va;
+	va_start(va, x);
+	vsprintf(buf, x, va);
+	va_end(va);
+}
+#endif
+
 
 // ============================================================================
 //
@@ -1041,9 +1125,9 @@ namespace DarkEdif
 #endif // EditorBuild
 }
 
-static DarkEdif::FusionDebuggerAdmin FusionDebugAdmin;
-
 #if EditorBuild
+
+static DarkEdif::FusionDebuggerAdmin FusionDebugAdmin;
 
 // ============================================================================
 //
@@ -1195,8 +1279,8 @@ DWORD WINAPI DarkEdifUpdateThread(void * data);
 void DarkEdif::SDKUpdater::StartUpdateCheck()
 {
 	DarkEdifUpdateThread(::SDK);
-	// updateThread = CreateThread(NULL, NULL, DarkEdifUpdateThread, ::SDK, 0, NULL);
-	// WaitForSingleObject(updateThread, INFINITE);
+	//updateThread = CreateThread(NULL, NULL, DarkEdifUpdateThread, ::SDK, 0, NULL);
+	//WaitForSingleObject(updateThread, INFINITE);
 }
 
 DarkEdif::SDKUpdater::ExtUpdateType DarkEdif::SDKUpdater::ReadUpdateStatus(std::string * logData)
@@ -1636,3 +1720,144 @@ DWORD WINAPI DarkEdifUpdateThread(void * data)
 
 
 #endif // EditorBuild
+
+
+// Define it
+std::tstring DarkEdif::ExtensionName;
+DWORD DarkEdif::MainThreadID;
+HWND DarkEdif::Internal_WindowHandle;
+
+//
+//
+//
+static int Internal_MessageBox(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, va_list v, int flags)
+{
+	assert(titlePrefix != NULL && msgFormat != NULL);
+	static std::tstring titleSuffix = _T(" - ") + DarkEdif::ExtensionName;
+
+	std::tstring title = titlePrefix + titleSuffix;
+	TCHAR msgData[4096];
+	int numChars = _vstprintf_s(msgData, sizeof(msgData) / sizeof(*msgData), msgFormat, v);
+	if (numChars <= 0)
+	{
+		MessageBox(DarkEdif::Internal_WindowHandle, _T("Failed to format a message box."), title.c_str(), MB_OK | MB_ICONERROR);
+		DarkEdif::BreakIfDebuggerAttached();
+		return IDCANCEL;
+	}
+	return MessageBox(DarkEdif::Internal_WindowHandle, msgData, title.c_str(), flags | MB_DEFBUTTON1);
+}
+void DarkEdif::MsgBox::WarningOK(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, ...)
+{
+	va_list v;
+	va_start(v, msgFormat);
+	Internal_MessageBox(titlePrefix, msgFormat, v, MB_OK | MB_ICONWARNING);
+	va_end(v);
+}
+int DarkEdif::MsgBox::WarningYesNo(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, ...)
+{
+	va_list v;
+	va_start(v, msgFormat);
+	int ret = Internal_MessageBox(titlePrefix, msgFormat, v, MB_YESNO | MB_ICONWARNING);
+	va_end(v);
+	return ret;
+}
+int DarkEdif::MsgBox::WarningYesNoCancel(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, ...)
+{
+	va_list v;
+	va_start(v, msgFormat);
+	int ret = Internal_MessageBox(titlePrefix, msgFormat, v, MB_YESNOCANCEL | MB_ICONWARNING);
+	va_end(v);
+	return ret;
+}
+void DarkEdif::MsgBox::Error(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, ...)
+{
+	va_list v;
+	va_start(v, msgFormat);
+	Internal_MessageBox(titlePrefix, msgFormat, v, MB_OK | MB_ICONERROR);
+	va_end(v);
+}
+void DarkEdif::MsgBox::Info(const TCHAR * titlePrefix, PrintFHintInside const TCHAR * msgFormat, ...)
+{
+	va_list v;
+	va_start(v, msgFormat);
+	Internal_MessageBox(titlePrefix, msgFormat, v, MB_OK | MB_ICONINFORMATION);
+	va_end(v);
+}
+
+#ifdef __ANDROID__
+
+#if DARKEDIF_LOG_MIN_LEVEL <= DARKEDIF_LOG_INFO
+void OutputDebugStringA(const char * debugString)
+{
+	assert(debugString != NULL);
+	// We can't get the user to remove their newlines, as Windows doesn't automatically add them in OutputDebugStringA(),
+	// but __android_log_print includes automatic newlines, so strip them.
+	std::string debugStringSafe(debugString);
+	if (debugStringSafe.back() == '\n')
+		debugStringSafe.resize(debugStringSafe.size() - 1U);
+	if (debugStringSafe.back() == '\r')
+		debugStringSafe.resize(debugStringSafe.size() - 1U);
+	if (debugStringSafe.back() == '.')
+		debugStringSafe.resize(debugStringSafe.size() - 1U);
+
+	LOGI("OutputDebugStringA: %s.", debugStringSafe.c_str());
+}
+#endif // DarkEdif log level INFO or higher
+
+// To get the Windows-like behaviour
+void Sleep(unsigned int milliseconds)
+{
+	if (milliseconds == 0)
+		std::this_thread::yield();
+	else
+		std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
+
+#endif
+
+// Causes the produced extension to include DarkExt.PostMinify.json.
+// Hat tip: https://stackoverflow.com/a/4910421
+// Also note https://github.com/graphitemaster/incbin/blob/master/incbin.h
+
+#ifdef __ANDROID__
+__asm__(".section .rodata				\n\
+	.global darkExtJSON					\n\
+	.type   darkExtJSON, %object		\n\
+	.align  4							\n\
+darkExtJSON:							\n\
+	.incbin \"DarkExt.PostMinify.json\"	\n\
+darkExtJSON_end:						\n\
+	.global darkExtJSONSize				\n\
+	.type   darkExtJSONSize, %object	\n\
+	.align  4							\n\
+darkExtJSONSize:						\n\
+	.int	darkExtJSON_end - darkExtJSON");
+#elif defined(__APPLE__)
+/**
+ * @file incbin.h
+ * @author Dale Weiler
+ * @brief Utility for including binary files
+ *
+ * Facilities for including binary files into the current translation unit and
+ * making use from them externally in other translation units.
+ */
+
+INCBIN(darkExtJSON, "DarkExt.PostMinify.json");
+
+// See https://stackoverflow.com/a/19725269
+// Note the file will NOT be transmitted to Mac unless it's set as a C/C++ header file.
+/*__asm__(".const_data					\n\
+	.global darkExtJSON					\n\
+	.align  4							\n\
+darkExtJSON:							\n\
+	.incbin \"DarkExt.PostMinify.json\"	\n\
+__asm__("darkExtJSON_end:						\n\
+	.global darkExtJSONSize				\n\
+	.align  4							\n\
+darkExtJSONSize:						\n\
+	.int	darkExtJSON_end - darkExtJSON");*/
+
+#endif
+// These are caused by the above ASM block. (these are also declared in the Android/iOS master header)
+// char darkExtJSON[];
+// unsigned darkExtJSONSize;

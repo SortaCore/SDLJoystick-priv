@@ -5,6 +5,9 @@ FusionSDKConfig.ini
 DarkExt.PostMinify.json
 # Intermediate files from build, and generated ACE callback table
 Temp/
+# HelpNDoc intermediate files, when you're editing HND files in "MFAs and documentation" folders
+*.lck
+*.hnd-journal
 
 #################
 ## Eclipse
@@ -68,7 +71,6 @@ local.properties
 MFX/
 MOX/
 
-
 *_i.c
 *_p.c
 *.ilk
@@ -87,6 +89,8 @@ MOX/
 *.vspscc
 .builds
 **/*.dotCover
+*.log
+*.desc
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #**/packages/ 

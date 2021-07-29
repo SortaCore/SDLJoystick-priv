@@ -9,8 +9,11 @@
 		<_TargetPlat>$(TargetPlatformIdentifier)</_TargetPlat>
 		<_TargetPlat Condition="$(_TargetPlat)==''">Windows</_TargetPlat>
 		<ExtName>$(ProjectName.Split('.')[0])</ExtName>
-		<TargetArch>x86</TargetArch>
-		<TargetArch Condition="'$(TargetArchAbi)'!=''">$(TargetArchAbi)</TargetArch>
+		<TargetArch Condition="'$(_TargetPlat)'!='iOS'">x86</TargetArch>
+		<TargetArch Condition="'$(_TargetPlat)'=='Android' AND '$(TargetArchAbi)'!=''">$(TargetArchAbi)</TargetArch>
+		<TargetArch Condition="'$(_TargetPlat)'=='iOS'">$(PlatformNativeArch)</TargetArch>
+		<TargetArch Condition="'$(_TargetPlat)'=='iOS' AND '$(Platform)'=='Win32'">i386</TargetArch>
+		<TargetArch Condition="'$(_TargetPlat)'=='iOS' AND '$(Platform)'=='ARM64'">arm64</TargetArch>
 
 		<DbgBuild>0</DbgBuild>
 		<RelBuild>0</RelBuild>
@@ -41,7 +44,7 @@
 
 		<!-- For ..\Inc and ..\Lib; OpenCV is in two levels of subfolders. -->
 		<SDKRootFolder>..</SDKRootFolder>
-		<SDKRootFolder Condition="$(ProjectDir.Contains('OpenCV'))">../../..</SDKRootFolder>
+		<SDKRootFolder Condition="$(ProjectDir.Contains('OpenCV'))">..\..\..</SDKRootFolder>
 		<!--<SDKRootFolder>$([System.IO.Path]::GetFullPath('$(SDKRootFolder)'))</SDKRootFolder>-->
 
 		<SDKType Condition="exists('$(ProjectDir)\DarkExt.json')">DarkEdif</SDKType>
@@ -58,10 +61,22 @@
 		<!-- Write intermediate and output files to an easily deleted/git-ignored folder. -->
 		<_FusionSDKTempDir>$(SolutionDir)Temp\$(ExtName)\$(_TargetPlat)\$(Configuration)\$(TargetArch)</_FusionSDKTempDir>
 
-		<!-- If user has enabled DarkEdif FusionDebugger class inside their Extension. -->
+		<!-- If user has enabled DarkEdif FusionDebugger class inside their Extension.
+			 Note, this also is defined in Android builds and so forth, to allow no-op FusionDebugger functions. -->
 		<DarkEdif_FusionDebugger>0</DarkEdif_FusionDebugger>
 		<!-- If user has enabled DarkEdif Update Checker inside their Extension. -->
 		<DarkEdif_UpdateChecker>0</DarkEdif_UpdateChecker>
+		<!-- PSCP copy parameters -->
+		<DarkEdif_PSCPPath>(Specify In FusionSDKConfig.ini)</DarkEdif_PSCPPath>
+		<!-- PSCP copy arguments:
+			{0} is replaced by remote path, {1} by local path.
+			Don't use quotes around {0} or {1}, but use them elsewhere.
+
+			Example using private key file:
+			-P port -i "Path To Private Key.ppk" MacUserName@MacIPAddress:{0} {1} -->
+		<DarkEdif_PSCPArgs>(Specify in FusionSDKConfig.ini) {0} {1}</DarkEdif_PSCPArgs>
+		<!-- Remote output folder to read from with PSCP. Should point to the DarkEdif Temp folder! -->
+		<DarkEdif_RemoteOutputFolder>(Specify in FusionSDKConfig.ini)</DarkEdif_RemoteOutputFolder>
 	</PropertyGroup>
 	<!-- Fusion SDK settings. Sets user preferences. -->
 	<PropertyGroup>
@@ -130,6 +145,25 @@
 		<_UseMultiProcessorRegex><![CDATA[(?im)^UseMultiProcessorCompilationInDebug\s*=\s*true\s*?$]]></_UseMultiProcessorRegex>
 		<_UseMultiProcessor Condition=
 			"$(RelBuild)==1 OR $([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_UseMultiProcessorRegex)).Success)">1</_UseMultiProcessor>
+
+		<!-- pscp.exe local filepath, used by iPhone remote build. Part of the PuTTY downloads. -->
+		<_DarkEdif_PSCPPathRegex><![CDATA[(?im)^PSCPPath\s*=\s*(.*)\s*$]]></_DarkEdif_PSCPPathRegex>
+		<DarkEdif_PSCPPath Condition="$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_PSCPPathRegex)).Success)"
+			>$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_PSCPPathRegex)).Result('$1'))</DarkEdif_PSCPPath>
+
+		<!-- iPhone remote build PSCP access parameters. -->
+		<_DarkEdif_PSCPArgsRegex><![CDATA[(?im)^PSCPArgs\s*=\s*(.*)\s*$]]></_DarkEdif_PSCPArgsRegex>
+		<DarkEdif_PSCPArgs Condition="$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_PSCPArgsRegex)).Success)"
+			>$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_PSCPArgsRegex)).Result('$1').Replace('"','%27'))</DarkEdif_PSCPArgs>
+
+		<!-- iPhone remote build output folder. For some reason, VS won't copy it back. -->
+		<_DarkEdif_RemoteOutputFolderRegex><![CDATA[(?im)^RemoteOutputFolder\s*=\s*(.*)\s*$]]></_DarkEdif_RemoteOutputFolderRegex>
+		<DarkEdif_RemoteOutputFolder Condition="$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_RemoteOutputFolderRegex)).Success)"
+			>$([System.Text.RegularExpressions.Regex]::Match($(_FusionSDKConfig), $(_DarkEdif_RemoteOutputFolderRegex)).Result('$1'))</DarkEdif_RemoteOutputFolder>
+
+		<!-- iPhone extensions are packaged into zips, with extensions EXT -->
+		<ZipExt>ZIP</ZipExt>
+		<ZipExt Condition="'$(_TargetPlat)'=='iOS'">EXT</ZipExt>
 	</PropertyGroup>
 	<PropertyGroup Condition="$(SDKType.Contains('Edif'))" Label="UserMacros">
 		<_JSON Condition="$(SDKType)=='DarkEdif'">$([System.IO.File]::ReadAllText('$(ProjectDir)\DarkExt.json'))</_JSON>
@@ -213,7 +247,7 @@
 			 Worth noting in ResourceCompiler, "true" is not true. 1 is apparently true though. -->
 		<_FusionSDKAddsRC>$(_FusionSDKAdds.Replace('\n',' ').Replace('\','\\\').Replace('STRIFY(','asStr(')) /D "BUILD_DATE=asStr($(BuildDate))"</_FusionSDKAddsRC>
 	</PropertyGroup>
-	<PropertyGroup Condition="$(_TargetPlat)=='Android'">
+	<PropertyGroup Condition="$(_TargetPlat)=='Android' OR $(_TargetPlat)=='iOS'">
 		<!-- Android uses Clang, a different format of commandline items
 			-D PROJECT_NAME=\"$(ExtName)\"
 			-D AUTHOR_NAME=\"$(AuthorName)\" -D "COMPANY_NAME=\"$(CompanyName)\"
@@ -221,7 +255,10 @@
 			-D BUILD_DATE=\"$(BuildDate)\" -D YEAR=\"$(Year)\"		-->
 		<!-- Doesn't work due to MS bug.
 		<_FusionSDKAdds>CONFIG=$(Configuration);PROJECT_NAME="$(ExtName)";AUTHOR_NAME="$(AuthorName)";COMPANY_NAME="$(CompanyName)";EXTENSION_VERSION=$(ExtVersion);YEAR="$(Year)"</_FusionSDKAdds> -->
-		<_FusionSDKAdds>CONFIG=$(Configuration);PROJECT_NAME=STRIFY($(ExtName));AUTHOR_NAME=STRIFY($(AuthorName));COMPANY_NAME=STRIFY($(CompanyName));EXTENSION_VERSION=$(ExtVersion);YEAR=STRIFY($(Year))</_FusionSDKAdds>
+		<_FusionSDKAdds>CONFIG=$(Configuration);PROJECT_NAME=STRIFY($(ExtName));PROJECT_NAME_UNDERSCORES=STRIFY($(ExtName.Replace(' ','_')));AUTHOR_NAME=STRIFY($(AuthorName));COMPANY_NAME=STRIFY($(CompanyName));EXTENSION_VERSION=$(ExtVersion);YEAR=STRIFY($(Year));USE_DARKEDIF_FUSION_DEBUGGER=$(DarkEdif_FusionDebugger);EditorBuild=$(EditorBuild);RuntimeBuild=$(RuntimeBuild);UniBuild=$(UniBuild)</_FusionSDKAdds>
+
+		<!-- Not defined by Clang, just MSVC. -->
+		<_FusionSDKAdds Condition="$(DbgBuild)==1">$(_FusionSDKAdds);_DEBUG=1</_FusionSDKAdds>
 	</PropertyGroup>
 	<Choose>
 		<When Condition="$(_TargetPlat)=='Windows'">
@@ -236,16 +273,22 @@
 				<MFXDir>$(SolutionDir)MFX\Data\Runtime\Android</MFXDir>
 			</PropertyGroup>
 		</When>
+		<When Condition="$(_TargetPlat)=='iOS'">
+			<PropertyGroup Label="UserMacros">
+				<MFXDir>$(SolutionDir)MFX\Data\Runtime\iPhone</MFXDir>
+			</PropertyGroup>
+		</When>
 	</Choose>
 	<!-- All runtimes should have these -->
 	<PropertyGroup>
 		<!-- Only used in CLR (C# mixed with C++) -->
 		<RootNamespace>$(SDKType)</RootNamespace>
 		<!-- MFX files are internally DLLs -->
-		<ConfigurationType>DynamicLibrary</ConfigurationType>
+		<ConfigurationType Condition="$(_TargetPlat)!='iOS'">DynamicLibrary</ConfigurationType>
 
 		<!-- TargetName is incorrect on MultiTargetSDK, due to project name containing '.' -->
 		<TargetName>$(ExtName)$(LangSuffix)</TargetName>
+		<TargetName Condition="$(_TargetPlat)=='Android' OR $(_TargetPlat)=='iOS'">lib$(ExtName.Replace(' ','_'))$(LangSuffix)</TargetName>
 
 		<!-- Prevent the madness of every linked DLL being copied to output folder. -->
 		<CopyCppRuntimeToOutputDir>false</CopyCppRuntimeToOutputDir>
@@ -258,7 +301,7 @@
 		<IntDir>$(_FusionSDKTempDir)\</IntDir>
 
 		<!-- Minifies JSON file and builds call table for runtimes that lack A/C/E ASM -->
-		<DarkEdifPreBuildToolParams>/ProjName="$(TargetName)" /TargetPlat="$(_TargetPlat)" /TargetArch="$(TargetArch)" /MacroInputFile="$(SDKRootFolder)/Lib/Shared/ACECallTable_Macro.cpp"  /MacroOutputFile="$(SolutionDir)/Temp/$(ExtName)/Temp_ACECallTable.cpp" /JSONInputPathToMinify="$(ProjectDir)\DarkExt.json"</DarkEdifPreBuildToolParams>
+		<DarkEdifPreBuildToolParams>/ProjName="$(ExtName)" /TargetPlat="$(_TargetPlat)" /TargetArch="$(TargetArch)" /MacroInputFile="$(SDKRootFolder)\Lib\Shared\ACECallTable_Macro.cpp"  /MacroOutputFile="$(SolutionDir)\Temp\$(ExtName)\Temp_ACECallTable.cpp" /JSONInputPathToMinify="$(ProjectDir)\DarkExt.json"</DarkEdifPreBuildToolParams>
 	</PropertyGroup>
 	<!-- Worth noting a When cannot contain a ItemDefinitionGroup -->
 	<ItemDefinitionGroup>
@@ -278,12 +321,16 @@
 			<!-- Runtime configs have RUN_ONLY #defined -->
 			<PreprocessorDefinitions Condition="$(RuntimeBuild)==1">RUN_ONLY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<!-- non-Debug needs NDEBUG -->
-			<PreprocessorDefinitions Condition="$(RelBuild)==1">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-			<PreprocessorDefinitions Condition="$(_TargetPlat)=='Android'">$(_FusionSDKAdds);$(PreprocessorDefinitions);%(PreprocessorDefinitions);</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="$(RelBuild)==1">NDEBUG;$(PreprocessorDefinitions)%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
-			<!-- Not including .\ causes includes of "Common.h" from the DarkEdif SDK to fail.
+			<PreprocessorDefinitions Condition="$(_TargetPlat)=='Android' OR '$(_TargetPlat)'=='iOS'">$(_FusionSDKAdds);%(PreprocessorDefinitions);</PreprocessorDefinitions>
+
+			<!-- Not including ProjectDir causes includes of "Common.h" from the DarkEdif SDK to fail.
 				 OpenCV's projects are in an addition layer of subfolders. -->
-			<AdditionalIncludeDirectories>./;$(SDKRootFolder)/Inc/$(_TargetPlat);$(SDKRootFolder)/Inc/Shared;$(SolutionDir)Temp/$(ExtName);$(SDKRootFolder)/Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>.\;$(SDKRootFolder)\Inc\$(_TargetPlat);$(SDKRootFolder)\Inc\Shared;$(SolutionDir)Temp\$(ExtName);$(SDKRootFolder)\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+			<!-- C++ is king. -->
+			<CompileAs>CompileAsCpp</CompileAs>
 		</ClCompile>
 	</ItemDefinitionGroup>
 
@@ -334,6 +381,8 @@
 			<!-- Old SDKs need this defined.
 				 STRICT is also defined, but not seemingly used. -->
 			<PreprocessorDefinitions Condition="$(SDKType)!='DarkEdif'">_WINDOWS;IN_EXT_VERSION2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<!-- Windows XP needs manual defines. Was in MMFMasterHeader, but external libraries won't respect that. -->
+			<PreprocessorDefinitions Condition="$(WindowsXPCompatibility)==1">_WIN32_WINNT=0x0501;WINVER=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
 			<!-- Max number of warnings without being asinine -->
 			<WarningLevel>Level3</WarningLevel>
@@ -345,8 +394,9 @@
 
 			<!-- Define PROJECT_NAME for use in DLL metadata. Unfortunately, we don't know company name.
 				 Can't do it in PreprocessorDefinitions, it doesn't like projects with spaces in their
-				 name. -->
-			<AdditionalOptions>$(_FusionSDKAdds) %(AdditionalOptions)</AdditionalOptions>
+				 name.
+				 Also, make __cplusplus represent the C++ standard for MSVC. -->
+			<AdditionalOptions>$(_FusionSDKAdds) /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>
 		<Link>
 			<!-- Windows subsystem. Required to prevent a warning message -->
@@ -473,55 +523,134 @@
 
 <!--#################################
 		END Windows
-		BEGIN Android
+		BEGIN Android and iOS
 	################################# -->
-	<PropertyGroup Label="Configuration" Condition="$(_TargetPlat)=='Android'">
+	<PropertyGroup Condition="'$(_TargetPlat)'!='Windows'">
+		<!-- To move the compiled SO file into the Data\Runtime\Android/iOS zip file. -->
+		<DarkEdifPostBuildToolParams>/ProjName="$(ExtName)" /TargetArch="$(TargetArch)" /InputSOFolder="$(OutDir.TrimEnd('\'))" /OutputDir="$(MFXDir.TrimEnd('\'))" /ProjectDir="$(ProjectDir.TrimEnd('\'))" /Platform="$(_TargetPlat)"</DarkEdifPostBuildToolParams>
+
+		<!-- iOS build results need copying back from remote folder. -->
+		<DarkEdifPostBuildToolParams>$(DarkEdifPostBuildToolParams) /RemoteOutputRootFolder="$(DarkEdif_RemoteOutputFolder)" /PSCPPath="$(DarkEdif_PSCPPath)" /PSCPArgs="$(DarkEdif_PSCPArgs)"</DarkEdifPostBuildToolParams>
+	</PropertyGroup>
+
+<!--#################################
+		END Android and iOS
+		BEGIN Android-only
+	################################# -->
+	<PropertyGroup Label="Configuration" Condition="'$(_TargetPlat)'=='Android'">
 		<!-- Debug libraries on Debug config -->
 		<UseDebugLibraries>false</UseDebugLibraries>
 		<UseDebugLibraries Condition="$(DbgBuild)==1">true</UseDebugLibraries>
-		<!-- Clang 5.0 is latest VS can use. 9.0 is the most recent. -->
+		<!-- Clang 5.0 is latest VS can use, packed with r16b. Clang 9.0 is the most recent. -->
 		<PlatformToolset>Clang_5_0</PlatformToolset>
-		<!-- Use GNU STL Static C Runtime library. -->
-		<UseOfStl>gnustl_static</UseOfStl>
+		<!-- Use LLVM Static C++ Runtime library. It's the only one supported by Google,
+			 the GNU STL is second-best but doesn't play nice all the time.
+			 https://www.phoronix.com/scan.php?page=news_item&px=Android-NDK-r16 -->
+		<UseOfStl>c++_static</UseOfStl>
+
 		<!-- Generate ARM style code for Thumb archs. -->
 		<ThumbMode Condition="'$(Platform)'=='ARM'">ARM</ThumbMode>
-		<!-- API that's readily accessible. Note 21 is minimum 64-bit API.
-			 Note that this does not really affect app compatibility; but
-			 if you do modify the API, you should probably add checks and
-			 warnings, maybe before dlopen() in the Java file. -->
+		<!-- API that's readily accessible. Note 21 is minimum 64-bit API. -->
 		<AndroidAPILevel>android-19</AndroidAPILevel>
-		<AndroidAPILevel Condition="'$(Platform)'=='ARM64'">android-21</AndroidAPILevel>
-		<!-- To move the compiled SO file into the Data\Runtime\Android zip file. -->
-		<DarkEdifPostBuildToolParams>/ProjName="$(TargetName)" /TargetArch="$(TargetArchABI)" /InputSOFolder="$(OutDir)" /OutputDir="$(MFXDir)"</DarkEdifPostBuildToolParams>
+		<AndroidAPILevel Condition="'$(Platform)'=='ARM64' OR '$(Platform)'=='x64'">android-21</AndroidAPILevel>
+
+		<!-- We should use _UseMultiProcessor, but on Windows, that prevents incremental linking.
+			 Not so on Android, so we use it all the time. -->
+		<UseMultiToolTask>true</UseMultiToolTask>
 	</PropertyGroup>
-	<ItemDefinitionGroup Label="Configuration" Condition="$(_TargetPlat)=='Android'">
+	<ItemDefinitionGroup Label="Configuration" Condition="'$(_TargetPlat)'=='Android'">
 		<ClCompile>
-			<!-- Don't need it. -->
-			<AdditionalIncludeDirectories>$(Sysroot)\usr\include;$(StlIncludeDirectories);$(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-			<!-- C++ is king. -->
-			<CompileAs>CompileAsCpp</CompileAs>
 			<!-- Use C++17, and C11, latest finalised standards. -->
 			<CppLanguageStandard>c++1z</CppLanguageStandard>
 			<CLanguageStandard>c11</CLanguageStandard>
-			<!-- Allows debugging. -->
-			<ExceptionHandling>UnwindTables</ExceptionHandling>
-			<!-- RTTI is requested by Fusion. -->
-			<RuntimeTypeInfo>true</RuntimeTypeInfo>
-			<!-- -->
+
+			<!-- Make it easier to do a call stack trace; also, smaller files. -->
 			<FunctionLevelLinking>true</FunctionLevelLinking>
-			<!-- Data sections -->
 			<DataLevelLinking>true</DataLevelLinking>
-			<!-- Don't export the functions, as Java doesn't need to see them. -->
-			<AdditionalOptions>-fvisibility=hidden %(AdditionalOptions)</AdditionalOptions>
+
+			<!-- Allows debugging in GDB/Visual Studio. -->
+			<ExceptionHandling>UnwindTables</ExceptionHandling>
+			<DebugInformationFormat>FullDebug</DebugInformationFormat>
+
+			<!-- Don't include debugger info in release builds. -->
+			<DebugInformationFormat Condition="$(RelBuild)==1">None</DebugInformationFormat>
+
+			<!-- Not necessary in Release, but has minimal size changes. -->
+			<RuntimeTypeInfo>true</RuntimeTypeInfo>
+
+			<!-- Manually add includes -->
+			<AdditionalIncludeDirectories>$(Sysroot)\usr\include;$(StlIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+
+			<!-- Don't export any functions by default, as Java doesn't need to see them.
+				 Disable #pragma comment getting compiler upset, and other issues. -->
+			<AdditionalOptions>-fvisibility=hidden -Wno-unknown-pragmas -Wno-unused-const-variable  %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>
 		<Link>
 			<VerboseOutput>false</VerboseOutput>
+			<OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+
 			<!-- Include math library (libm.so). -->
 			<LibraryDependencies>$(StlLibraryName);m;%(LibraryDependencies)</LibraryDependencies>
-			<OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-			<!-- This SO static object file will be moved by the DarkEdifPostBuildTool. -->
+			<!-- Include android_support library for x86 and ARM (available in x86/ARM constantly, but only in ARM64/x64 for NDK17 and lower) -->
+			<LibraryDependencies Condition="'$(NDKVersion)' &lt; '17.0'">$(StlLibraryName);android_support;%(LibraryDependencies)</LibraryDependencies>
+			<!-- This SO static object file will be moved by the DarkEdifPostBuildTool,
+				 so don't confuse VS by building this way. -->
 			<IncrementalLink>false</IncrementalLink>
+			<!-- Strip out debugger info in release builds. Removes ClCompile.DebuggerSymbolInformation if it's there, too. -->
+			<DebuggerSymbolInformation Condition="$(RelBuild)==1">OmitAllSymbolInformation</DebuggerSymbolInformation>
+
 		</Link>
+	</ItemDefinitionGroup>
+
+<!--#################################
+		END Android
+		BEGIN iOS
+	################################# -->
+	<PropertyGroup Condition="$(_TargetPlat)=='iOS'">
+		<!-- Always static -->
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<iOSConfigurationType>StaticLibrary</iOSConfigurationType>
+		<!-- Debug libraries on Debug config -->
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<UseDebugLibraries Condition="$(DbgBuild)==1">true</UseDebugLibraries>
+		<!-- Most recent supported -->
+		<PlatformToolset>XCode_6_1</PlatformToolset>
+		<!-- libSTDc++ (not libc++) was deprecated ages ago, and is not available on watchOS or tvOS. -->
+		<UseOfStl>libc++</UseOfStl>
+	</PropertyGroup>
+
+	<ItemDefinitionGroup Condition="'$(_TargetPlat)'=='iOS'">
+		<ClCompile>
+			<PrecompiledHeader>NotUsing</PrecompiledHeader>
+			<!-- <AdditionalIncludeDirectories>$(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>-->
+			<PreprocessorDefinitions>__APPLE__;PLATFORM=1;PROJECT_NAME_RAW=$(ExtName.Replace(' ','_'));%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<!-- Use C++17, and C11, latest finalised standards. -->
+			<CppLanguageStandard>c++17</CppLanguageStandard>
+			<CLanguageStandard>c11</CLanguageStandard>
+			<!-- We need C++ exception handling. -->
+			<ExceptionHandling>Enabled</ExceptionHandling>
+		</ClCompile>
+	</ItemDefinitionGroup>
+
+	<ItemDefinitionGroup Condition="$(_TargetPlat)=='iOS' AND $(DbgBuild)==1">
+		<ClCompile>
+			<!-- Maximum debug information -->
+			<RuntimeTypeInfo>true</RuntimeTypeInfo>
+			<GenerateDebugSymbols>true</GenerateDebugSymbols>
+			<Optimization>Disabled</Optimization>
+			<DebugInformationLevel>Default</DebugInformationLevel>
+			<LinkTimeOptimization>false</LinkTimeOptimization>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="$(_TargetPlat)=='iOS' AND $(DbgBuild)==0">
+		<ClCompile>
+			<!-- No debugger functionality -->
+			<GenerateDebugSymbols>false</GenerateDebugSymbols>
+			<DebugInformationLevel>Default</DebugInformationLevel>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+			<Optimization>Full</Optimization>
+			<LinkTimeOptimization Condition="$(LTCG)=='Y'">true</LinkTimeOptimization>
+		</ClCompile>
 	</ItemDefinitionGroup>
 
 
@@ -583,8 +712,8 @@
 	</Target>
 
 	<!-- Post build tool for non-Windows. Copies built SO into ZIP in MFX\Data\Runtime. -->
-	<Target Name="Copy SO files into ZIP" Condition="$(SDKType)=='DarkEdif' AND $(_TargetPlat)=='Android'" AfterTargets="Build">
-      <Message Text="Copying the built SO into a ZIP file inside MFX\Data\Runtime..." Importance="High" />
+	<Target Name="Copy SO files into ZIP" Condition="$(SDKType)=='DarkEdif' AND '$(_TargetPlat)'!='Windows'" AfterTargets="Build">
+      <Message Text="Copying the built libraries into the $(ZipExt) file in MFX\Data\Runtime..." Importance="High" />
 	  <Exec Command="&quot;$(SDKRootFolder)\DarkEdifPostBuildTool.exe&quot; $(DarkEdifPostBuildToolParams)" />
     </Target>
 

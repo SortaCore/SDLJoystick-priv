@@ -1,4 +1,5 @@
-#include <DarkEdif.h>
+#pragma once
+#include "DarkEdif.h"
 
 #define SDL_MAIN_HANDLED
 #include "sdl/SDL_config.h"
@@ -48,8 +49,16 @@ class Extension
 {
 public:
 
+#ifdef _WIN32
 	RUNDATA * rdPtr;
-	RunHeader *	rhPtr;
+	RunHeader * rhPtr;
+#elif defined(__ANDROID__)
+	RuntimeFunctions & runFuncs;
+	global<jobject> javaExtPtr;
+#else
+	RuntimeFunctions & runFuncs;
+	void * objCExtPtr;
+#endif
 
 	Edif::Runtime Runtime;
 
@@ -61,7 +70,13 @@ public:
 
 	static const int WindowProcPriority = 100;
 
+#ifdef _WIN32
 	Extension(RUNDATA * rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobPtr);
+#elif defined(__ANDROID__)
+	Extension(RuntimeFunctions & runFuncs, EDITDATA * edPtr, jobject javaExtPtr);
+#else
+	Extension(RuntimeFunctions & runFuncs, EDITDATA * edPtr, void * objCExtPtr);
+#endif
 	~Extension();
 
 	DarkEdif::FusionDebugger FusionDebugger;
@@ -134,9 +149,9 @@ public:
 
 	/* These are called if there's no function linked to an ID */
 
-	void Action(int ID, RUNDATA * rdPtr, long param1, long param2);
-	long Condition(int ID, RUNDATA * rdPtr, long param1, long param2);
-	long Expression(int ID, RUNDATA * rdPtr, long param);
+	void Action(int ID);
+	long Condition(int ID);
+	long Expression(int ID);
 
 
 

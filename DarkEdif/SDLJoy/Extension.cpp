@@ -5,8 +5,16 @@
 /// EXTENSION CONSTRUCTOR/DESTRUCTOR
 ///
 
-Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobPtr)
-	: rdPtr(_rdPtr), rhPtr(_rdPtr->rHo.AdRunHeader), Runtime(_rdPtr), FusionDebugger(this)
+#ifdef _WIN32
+Extension::Extension(RUNDATA * _rdPtr, EDITDATA * edPtr, CreateObjectInfo * cobPtr) :
+	rdPtr(_rdPtr), rhPtr(_rdPtr->rHo.AdRunHeader), Runtime(&_rdPtr->rHo), FusionDebugger(this)
+#elif defined(__ANDROID__)
+Extension::Extension(RuntimeFunctions & runFuncs, EDITDATA * edPtr, jobject javaExtPtr) :
+	runFuncs(runFuncs), javaExtPtr(javaExtPtr), Runtime(runFuncs, this->javaExtPtr), FusionDebugger(this)
+#else
+Extension::Extension(RuntimeFunctions & runFuncs, EDITDATA * edPtr, void * objCExtPtr) :
+	runFuncs(runFuncs), objCExtPtr(objCExtPtr), Runtime(runFuncs, this->objCExtPtr), FusionDebugger(this)
+#endif
 {
 	/*
 		Link all your action/condition/expression functions to their IDs to match the
@@ -351,17 +359,17 @@ short Extension::Continue()
 
 // These are called if there's no function linked to an ID
 
-void Extension::Action(int ID, RUNDATA * rdPtr, long param1, long param2)
+void Extension::Action(int ID)
 {
 
 }
 
-long Extension::Condition(int ID, RUNDATA * rdPtr, long param1, long param2)
+long Extension::Condition(int ID)
 {
 	return false;
 }
 
-long Extension::Expression(int ID, RUNDATA * rdPtr, long param)
+long Extension::Expression(int ID)
 {
 	return 0;
 }
